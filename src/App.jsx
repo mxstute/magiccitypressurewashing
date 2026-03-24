@@ -196,7 +196,7 @@ function CTA() {
         </p>
         <PhoneBtn />
         <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: GRAY, marginTop: 20 }}>
-          or visit <a href="https://magiccityservices.com" style={{ color: PINK, textDecoration: "none", fontWeight: 600 }}>magiccityservices.com</a> for all our services
+          or visit <a href="https://magiccityservicesmiami.com" style={{ color: PINK, textDecoration: "none", fontWeight: 600 }}>magiccityservicesmiami.com</a> for all our services
         </p>
       </div>
     </section>
