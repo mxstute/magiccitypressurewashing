@@ -7,7 +7,7 @@ const DARK2 = "#111827";
 const DARK3 = "#1E293B";
 const LIGHT = "#F8FAFC";
 const GRAY = "#94A3B8";
-const PHONE = "(305) 555-0199";
+const PHONE = "(305) 783-3133";
 
 function PhoneBtn({ full = false }) {
   return (
@@ -217,6 +217,284 @@ function Footer() {
   );
 }
 
+
+// ==================== BOOKING SYSTEM ====================
+
+const FORMSPREE_BOOKING = "https://formspree.io/f/xqeyrgno";
+const FORMSPREE_QUOTE = "https://formspree.io/f/xyknrbor";
+const bookingPackages = [
+    { name: "Driveway / Sidewalk", price: 199, desc: "Standard driveway or sidewalk cleaning" },
+    { name: "House Exterior", price: 349, desc: "Full house exterior soft wash" },
+    { name: "Full Property", price: 649, desc: "Driveway + house + patio + pool deck" },
+];
+const timeSlots = ["8:00 AM", "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
+
+function BookingInput({ label, ...props }) {
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
+      <input {...props} style={{ width: "100%", padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box", ...props.style }}
+        onFocus={e => e.target.style.borderColor = "#7DD3FC55"} onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.08)"} />
+    </div>
+  );
+}
+
+function BookingSystem() {
+  const [tab, setTab] = useState("book");
+  const [step, setStep] = useState(1);
+  const [selectedPkg, setSelectedPkg] = useState(null);
+  const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", date: "", time: "", vehicle: "", notes: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [quoteSubmitted, setQuoteSubmitted] = useState(false);
+
+  const update = (k, v) => setForm(p => ({ ...p, [k]: v }));
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+  const minDate = tomorrow.toISOString().split("T")[0];
+
+  const handleBooking = async () => {
+    setSubmitting(true);
+    try {
+      await fetch(FORMSPREE_BOOKING, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          _subject: "New Booking: Pressure Washing — " + selectedPkg.name,
+          service: "Pressure Washing", package: selectedPkg.name, packagePrice: "$" + selectedPkg.price,
+          ...form,
+        }),
+      });
+      setSubmitted(true);
+    } catch (e) { alert("Something went wrong. Please call us at " + PHONE); }
+    setSubmitting(false);
+  };
+
+  const handleQuote = async (e) => {
+    e.preventDefault(); setSubmitting(true);
+    try {
+      await fetch(FORMSPREE_QUOTE, { method: "POST", body: new FormData(e.target) });
+      setQuoteSubmitted(true);
+    } catch (e) { alert("Something went wrong. Please call us at " + PHONE); }
+    setSubmitting(false);
+  };
+
+  const tabBtn = (id, label, icon) => (
+    <button onClick={() => { setTab(id); setStep(1); setSelectedPkg(null); setSubmitted(false); setQuoteSubmitted(false); }}
+      style={{ flex: 1, padding: "14px 12px", borderRadius: 12, border: "none", cursor: "pointer",
+        background: tab === id ? PINK : "rgba(255,255,255,0.04)", color: tab === id ? "#fff" : GRAY,
+        fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600,
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "all 0.2s" }}>
+      <span style={{ fontSize: 18 }}>{icon}</span> {label}
+    </button>
+  );
+
+  if (submitted) {
+    return (
+      <section id="book" style={{ background: DARK2, padding: "80px max(20px,4vw)" }}>
+        <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", background: DARK3, borderRadius: 24, padding: "60px 40px", border: "1px solid rgba(244,114,182,0.15)" }}>
+          <div style={{ fontSize: 56, marginBottom: 20 }}>🎉</div>
+          <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, fontWeight: 700, color: LIGHT, margin: "0 0 12px" }}>Booking Confirmed!</h2>
+          <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 16, color: GRAY, lineHeight: 1.7, marginBottom: 8 }}>
+            We've received your booking for <strong style={{ color: PINK }}>{selectedPkg?.name}</strong>.
+          </p>
+          <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, color: GRAY, lineHeight: 1.7, marginBottom: 32 }}>
+            You'll receive a confirmation call within 30 minutes during business hours.
+          </p>
+          <PhoneBtn />
+          <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: GRAY, marginTop: 24, cursor: "pointer" }} onClick={() => { setSubmitted(false); setStep(1); setSelectedPkg(null); }}>← Book another service</p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="book" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 100%)`, padding: "80px max(20px,4vw)" }}>
+      <div style={{ maxWidth: 600, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: PINK, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Get Started</div>
+          <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(26px,4vw,40px)", fontWeight: 700, color: LIGHT, margin: "0 0 12px" }}>Book Your Pressure Washing</h2>
+          <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, color: GRAY }}>Book online, request a custom quote, or call us directly.</p>
+        </div>
+
+        <div style={{ display: "flex", gap: 8, marginBottom: 24, padding: "6px", background: "rgba(255,255,255,0.02)", borderRadius: 16, border: "1px solid rgba(255,255,255,0.04)" }}>
+          {tabBtn("book", "Book Online", "📅")}
+          {tabBtn("quote", "Get a Quote", "📝")}
+          {tabBtn("call", "Call Now", "📞")}
+        </div>
+
+        {/* ====== BOOK TAB ====== */}
+        {tab === "book" && (
+          <div style={{ background: DARK3, borderRadius: 24, padding: "32px 28px", border: "1px solid rgba(255,255,255,0.04)" }}>
+            {/* Progress */}
+            <div style={{ display: "flex", gap: 8, marginBottom: 28 }}>
+              {["Package", "Date & Time", "Your Info"].map((s, i) => (
+                <div key={s} style={{ flex: 1 }}>
+                  <div style={{ height: 3, borderRadius: 2, background: step > i ? PINK : "rgba(255,255,255,0.06)", transition: "background 0.3s" }} />
+                  <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 10, color: step > i ? PINK : GRAY, marginTop: 6, textTransform: "uppercase", letterSpacing: 1 }}>{s}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Step 1: Package */}
+            {step === 1 && (
+              <div>
+                <h3 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 600, color: LIGHT, margin: "0 0 16px" }}>Select a package:</h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {bookingPackages.map(p => (
+                    <button key={p.name} onClick={() => { setSelectedPkg(p); setStep(2); }}
+                      style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, cursor: "pointer", textAlign: "left", transition: "all 0.2s" }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = PINK + "44"; e.currentTarget.style.background = PINK + "08"; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}>
+                      <div>
+                        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 600, color: LIGHT }}>{p.name}</div>
+                        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: GRAY }}>{p.desc}</div>
+                      </div>
+                      <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 16 }}>
+                        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 700, color: PINK }}>${p.price}</div>
+                        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, color: BLUE }}>Free estimate</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Date & Time */}
+            {step === 2 && (
+              <div>
+                <button onClick={() => setStep(1)} style={{ background: "none", border: "none", color: GRAY, fontFamily: "'Outfit',sans-serif", fontSize: 13, cursor: "pointer", marginBottom: 16 }}>← Back</button>
+                <h3 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 600, color: LIGHT, margin: "0 0 16px" }}>When works best?</h3>
+                <BookingInput label="Preferred Date" type="date" min={minDate} value={form.date} onChange={e => update("date", e.target.value)} />
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Preferred Time</label>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {timeSlots.map(t => (
+                      <button key={t} onClick={() => update("time", t)}
+                        style={{ padding: "9px 14px", borderRadius: 10, cursor: "pointer",
+                          background: form.time === t ? PINK : "rgba(255,255,255,0.03)",
+                          border: form.time === t ? "none" : "1px solid rgba(255,255,255,0.06)",
+                          color: form.time === t ? "#fff" : GRAY,
+                          fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 500, transition: "all 0.15s" }}>
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <button onClick={() => { if (form.date && form.time) setStep(3); else alert("Please select a date and time."); }}
+                  style={{ width: "100%", padding: "14px", borderRadius: 50, border: "none", background: (form.date && form.time) ? PINK : GRAY, color: "#fff", fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 700, cursor: "pointer", marginTop: 8 }}>
+                  Continue →
+                </button>
+              </div>
+            )}
+
+            {/* Step 3: Contact Info */}
+            {step === 3 && (
+              <div>
+                <button onClick={() => setStep(2)} style={{ background: "none", border: "none", color: GRAY, fontFamily: "'Outfit',sans-serif", fontSize: 13, cursor: "pointer", marginBottom: 16 }}>← Back</button>
+                <h3 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 600, color: LIGHT, margin: "0 0 6px" }}>Almost done!</h3>
+                <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: GRAY, marginBottom: 16 }}>
+                  {selectedPkg?.name} — {form.date} at {form.time}
+                </p>
+                <div style={{ background: "rgba(244,114,182,0.06)", border: "1px solid rgba(244,114,182,0.12)", borderRadius: 14, padding: "14px 18px", marginBottom: 20 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                      <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, color: LIGHT }}>💦 {selectedPkg?.name}</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 18, fontWeight: 700, color: PINK }}>${selectedPkg?.price}</div>
+                      <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, color: BLUE }}>Price after on-site estimate</div>
+                    </div>
+                  </div>
+                </div>
+                <BookingInput label="Full Name" type="text" placeholder="Your full name" value={form.name} onChange={e => update("name", e.target.value)} />
+                <BookingInput label="Phone" type="tel" placeholder="(305) 000-0000" value={form.phone} onChange={e => update("phone", e.target.value)} />
+                <BookingInput label="Email" type="email" placeholder="your@email.com" value={form.email} onChange={e => update("email", e.target.value)} />
+                <BookingInput label="Service Address" type="text" placeholder="Where should we come?" value={form.address} onChange={e => update("address", e.target.value)} />
+                
+                <button onClick={handleBooking} disabled={submitting || !form.name || !form.phone || !form.email || !form.address}
+                  style={{ width: "100%", padding: "15px", borderRadius: 50, border: "none",
+                    background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, color: "#fff",
+                    fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 700, cursor: "pointer", marginTop: 8, opacity: submitting ? 0.6 : 1 }}>
+                  {submitting ? "Submitting..." : "Book Free On-Site Estimate"}
+                </button>
+                <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, color: GRAY, textAlign: "center", marginTop: 14 }}>
+                  We'll confirm within 30 minutes during business hours.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ====== QUOTE TAB ====== */}
+        {tab === "quote" && (
+          <div style={{ background: DARK3, borderRadius: 24, padding: "32px 28px", border: "1px solid rgba(255,255,255,0.04)" }}>
+            {quoteSubmitted ? (
+              <div style={{ textAlign: "center", padding: "40px 0" }}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
+                <h3 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 22, fontWeight: 600, color: LIGHT, margin: "0 0 8px" }}>Quote Request Received!</h3>
+                <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, color: GRAY, marginBottom: 20 }}>We'll get back to you within the hour.</p>
+                <PhoneBtn />
+              </div>
+            ) : (
+              <form onSubmit={handleQuote}>
+                <h3 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 600, color: LIGHT, margin: "0 0 6px" }}>Request a Free Quote</h3>
+                <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, color: GRAY, marginBottom: 20 }}>Need a custom quote for your property? Describe the surfaces and we'll get back to you within the hour.</p>
+                <input type="hidden" name="_subject" value="Quote Request — Magic City Pressure Washing" />
+                <input type="hidden" name="service" value="Pressure Washing" />
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Describe Your Project</label>
+                  <textarea name="description" rows={4} required placeholder="Tell us about the job..."
+                    style={{ width: "100%", padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box", resize: "vertical" }}
+                    onFocus={e => e.target.style.borderColor = PINK + "55"} onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.08)"} />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <BookingInput label="Full Name" name="name" type="text" placeholder="Your name" required />
+                  <BookingInput label="Phone" name="phone" type="tel" placeholder="(305) 000-0000" required />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <BookingInput label="Email" name="email" type="email" placeholder="your@email.com" required />
+                  <BookingInput label="Address / Zip" name="address" type="text" placeholder="Miami, FL 33101" />
+                </div>
+                <button type="submit" disabled={submitting}
+                  style={{ width: "100%", padding: "15px", borderRadius: 50, border: "none",
+                    background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, color: "#fff",
+                    fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 700, cursor: "pointer", marginTop: 8, opacity: submitting ? 0.6 : 1 }}>
+                  {submitting ? "Sending..." : "Submit Quote Request"}
+                </button>
+              </form>
+            )}
+          </div>
+        )}
+
+        {/* ====== CALL TAB ====== */}
+        {tab === "call" && (
+          <div style={{ background: DARK3, borderRadius: 24, padding: "44px 28px", border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>📞</div>
+            <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, fontWeight: 700, color: LIGHT, margin: "0 0 12px" }}>Talk to Us Now</h3>
+            <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, color: GRAY, lineHeight: 1.7, marginBottom: 28, maxWidth: 380, margin: "0 auto 28px" }}>
+              Available 7 days a week for immediate quotes, same-day service, or any questions.
+            </p>
+            <a href={`tel:${PHONE.replace(/[^0-9]/g, "")}`} style={{
+              display: "inline-flex", alignItems: "center", gap: 12, padding: "18px 44px",
+              background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, color: "#fff",
+              borderRadius: 50, fontFamily: "'Outfit',sans-serif", fontSize: 22, fontWeight: 700,
+              textDecoration: "none" }}>
+              {PHONE}
+            </a>
+            <div style={{ display: "flex", justifyContent: "center", gap: 28, marginTop: 28, flexWrap: "wrap" }}>
+              {[{ label: "Mon – Sat", value: "7am – 7pm" }, { label: "Sunday", value: "9am – 5pm" }, { label: "Emergency", value: "Call anytime" }].map(h => (
+                <div key={h.label}>
+                  <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, color: LIGHT }}>{h.value}</div>
+                  <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, color: GRAY }}>{h.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export default function PressureWashingPage() {
   return (
     <>
@@ -226,7 +504,7 @@ export default function PressureWashingPage() {
         html{scroll-behavior:smooth}body{background:${DARK}}
         ::selection{background:${BLUE}44;color:#fff}
       `}</style>
-      <Nav /><Hero /><Services /><WhyUs /><Areas /><CTA /><Footer />
+      <Nav /><Hero /><Services /><BookingSystem /><WhyUs /><Areas /><CTA /><Footer />
     </>
   );
 }
