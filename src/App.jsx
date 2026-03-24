@@ -99,12 +99,12 @@ function Hero() {
 
 function Services() {
   const items = [
-    { icon: "🏠", title: "House Exterior Washing", desc: "Remove years of dirt, mold, and mildew from stucco, vinyl, brick, and painted surfaces.", price: "From $199" },
-    { icon: "🛣️", title: "Driveway & Sidewalk", desc: "Blast away oil stains, tire marks, algae, and grime from concrete and pavers.", price: "From $129" },
+    { icon: "🏠", title: "House Exterior Washing", desc: "Remove years of dirt, mold, and mildew from stucco, vinyl, brick, and painted surfaces.", price: "From $299" },
+    { icon: "🛣️", title: "Driveway & Sidewalk", desc: "Blast away oil stains, tire marks, algae, and grime from concrete and pavers.", price: "From $199" },
     { icon: "🏊", title: "Pool Deck & Patio", desc: "Restore slip-prone, algae-covered pool decks to clean, safe surfaces.", price: "From $149" },
     { icon: "🏢", title: "Commercial Properties", desc: "Storefronts, parking lots, loading docks, and building exteriors. Flexible scheduling.", price: "Custom quote" },
-    { icon: "🏡", title: "Roof Soft Washing", desc: "Low-pressure treatment that safely removes black streaks and algae without damaging shingles.", price: "From $299" },
-    { icon: "🧱", title: "Fence & Wall Cleaning", desc: "Wood, vinyl, and concrete fences and retaining walls restored to original condition.", price: "From $99" },
+    { icon: "🏡", title: "Roof Soft Washing", desc: "Low-pressure treatment that safely removes black streaks and algae without damaging shingles.", price: "From $399" },
+    { icon: "🧱", title: "Fence & Wall Cleaning", desc: "Wood, vinyl, and concrete fences and retaining walls restored to original condition.", price: "From $149" },
   ];
 
   return (
