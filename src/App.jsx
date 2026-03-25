@@ -320,7 +320,7 @@ function BookingSystem() {
   if (submitted) {
     return (
       <section id="book" style={{ background: DARK2, padding: "80px 24px" }}>
-        <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", background: DARK3, borderRadius: 24, padding: "48px clamp(20px, 5vw, 40px)", border: "1px solid rgba(244,114,182,0.15)" }}>
+        <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", background: DARK3, borderRadius: 24, padding: "44px 28px", border: "1px solid rgba(244,114,182,0.15)" }}>
           <div style={{ fontSize: 56, marginBottom: 20 }}>🎉</div>
           <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, fontWeight: 700, color: LIGHT, margin: "0 0 12px" }}>Booking Confirmed!</h2>
           <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 16, color: GRAY, lineHeight: 1.7, marginBottom: 8 }}>
@@ -353,7 +353,7 @@ function BookingSystem() {
 
         {/* ====== BOOK TAB ====== */}
         {tab === "book" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "28px clamp(16px, 5vw, 32px)", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "28px 28px", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
             {/* Progress */}
             <div style={{ display: "flex", gap: 8, marginBottom: 28 }}>
               {["Package", "Date & Time", "Your Info"].map((s, i) => (
@@ -456,7 +456,7 @@ function BookingSystem() {
 
         {/* ====== QUOTE TAB ====== */}
         {tab === "quote" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "28px clamp(16px, 5vw, 32px)", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "28px 28px", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
             {quoteSubmitted ? (
               <div style={{ textAlign: "center", padding: "40px 0" }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
@@ -497,7 +497,7 @@ function BookingSystem() {
 
         {/* ====== CALL TAB ====== */}
         {tab === "call" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "40px clamp(16px, 5vw, 32px)", border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "36px 28px", border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>📞</div>
             <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, fontWeight: 700, color: LIGHT, margin: "0 0 12px" }}>Talk to Us Now</h3>
             <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, color: GRAY, lineHeight: 1.7, marginBottom: 28, maxWidth: 380, margin: "0 auto 28px" }}>
@@ -540,6 +540,7 @@ export default function PressureWashingPage() {
         }
         @media (min-width: 769px) {
           .mobile-menu { display: none !important; }
+        input, textarea, select, button { max-width: 100%; box-sizing: border-box; }
         }
       `}</style>
       <Nav /><Hero /><Services /><WhyUs /><BookingSystem /><Areas /><CTA /><Footer />
