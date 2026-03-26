@@ -33,7 +33,8 @@ function useGooglePlaces() {
     const script = document.createElement("script");
     script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_KEY}&libraries=places`;
     script.async = true;
-    script.onload = () => setLoaded(true);
+    script.onload = () => { try { if (window.google?.maps?.places) setLoaded(true); } catch(e) {} };
+    script.onerror = () => {};
     document.head.appendChild(script);
   }, []);
   return loaded;
@@ -43,24 +44,37 @@ function AddressAutocomplete({ label, value, onChange, placeholder = "Start typi
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
   const placesLoaded = useGooglePlaces();
+
+  useEffect(() => {
+    if (inputRef.current && value && inputRef.current.value !== value) {
+      inputRef.current.value = value;
+    }
+  }, [value]);
+
   useEffect(() => {
     if (!placesLoaded || !inputRef.current || autocompleteRef.current) return;
-    const ac = new window.google.maps.places.Autocomplete(inputRef.current, {
-      componentRestrictions: { country: "us" },
-      fields: ["formatted_address", "geometry"],
-      types: ["address"],
-    });
-    ac.setBounds(new window.google.maps.LatLngBounds({ lat: 25.3, lng: -80.9 }, { lat: 26.0, lng: -80.0 }));
-    ac.addListener("place_changed", () => {
-      const place = ac.getPlace();
-      if (place?.formatted_address) onChange(place.formatted_address);
-    });
-    autocompleteRef.current = ac;
+    try {
+      const ac = new window.google.maps.places.Autocomplete(inputRef.current, {
+        componentRestrictions: { country: "us" },
+        fields: ["formatted_address"],
+        types: ["address"],
+      });
+      ac.setBounds(new window.google.maps.LatLngBounds({ lat: 25.3, lng: -80.9 }, { lat: 26.0, lng: -80.0 }));
+      ac.addListener("place_changed", () => {
+        const place = ac.getPlace();
+        if (place?.formatted_address) onChange(place.formatted_address);
+      });
+      autocompleteRef.current = ac;
+    } catch (e) {}
   }, [placesLoaded]);
+
   return (
     <div style={{ marginBottom: 16 }}>
       <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
-      <input ref={inputRef} type="text" placeholder={placeholder} value={value} onChange={e => onChange(e.target.value)}
+      <input ref={inputRef} type="text" placeholder={placeholder}
+        defaultValue={value}
+        onChange={e => onChange(e.target.value)}
+        autoComplete="off"
         style={{ width: "100%", padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box" }}
         onFocus={e => e.target.style.borderColor = PINK + "55"} onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.08)"} />
     </div>
