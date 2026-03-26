@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const PINK = "#F472B6";
 const BLUE = "#7DD3FC";
@@ -17,6 +17,53 @@ function PhoneBtn({ full = false }) {
       fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700,
       textDecoration: "none", letterSpacing: 0.5, width: full ? "100%" : "auto", justifyContent: "center",
     }}>📞 {PHONE}</a>
+  );
+}
+
+
+// Google Places Autocomplete
+const GOOGLE_MAPS_KEY = "AIzaSyAMDTN_tRU_MIKTh29BHZvrWRdOaYHZc98";
+
+function useGooglePlaces() {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    if (!GOOGLE_MAPS_KEY || GOOGLE_MAPS_KEY === "REPLACE_ME") return;
+    if (window.google?.maps?.places) { setLoaded(true); return; }
+    if (document.querySelector('script[src*="maps.googleapis"]')) return;
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_KEY}&libraries=places`;
+    script.async = true;
+    script.onload = () => setLoaded(true);
+    document.head.appendChild(script);
+  }, []);
+  return loaded;
+}
+
+function AddressAutocomplete({ label, value, onChange, placeholder = "Start typing your address..." }) {
+  const inputRef = useRef(null);
+  const autocompleteRef = useRef(null);
+  const placesLoaded = useGooglePlaces();
+  useEffect(() => {
+    if (!placesLoaded || !inputRef.current || autocompleteRef.current) return;
+    const ac = new window.google.maps.places.Autocomplete(inputRef.current, {
+      componentRestrictions: { country: "us" },
+      fields: ["formatted_address", "geometry"],
+      types: ["address"],
+    });
+    ac.setBounds(new window.google.maps.LatLngBounds({ lat: 25.3, lng: -80.9 }, { lat: 26.0, lng: -80.0 }));
+    ac.addListener("place_changed", () => {
+      const place = ac.getPlace();
+      if (place?.formatted_address) onChange(place.formatted_address);
+    });
+    autocompleteRef.current = ac;
+  }, [placesLoaded]);
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
+      <input ref={inputRef} type="text" placeholder={placeholder} value={value} onChange={e => onChange(e.target.value)}
+        style={{ width: "100%", padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box" }}
+        onFocus={e => e.target.style.borderColor = PINK + "55"} onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.08)"} />
+    </div>
   );
 }
 
@@ -438,7 +485,7 @@ function BookingSystem() {
                 <BookingInput label="Full Name" type="text" placeholder="Your full name" value={form.name} onChange={e => update("name", e.target.value)} />
                 <BookingInput label="Phone" type="tel" placeholder="(305) 000-0000" value={form.phone} onChange={e => update("phone", e.target.value)} />
                 <BookingInput label="Email" type="email" placeholder="your@email.com" value={form.email} onChange={e => update("email", e.target.value)} />
-                <BookingInput label="Service Address" type="text" placeholder="Where should we come?" value={form.address} onChange={e => update("address", e.target.value)} />
+                <AddressAutocomplete label="Service Address" value={form.address} onChange={v => update("address", v)} placeholder="Start typing your address..." />
                 
                 <button onClick={handleBooking} disabled={submitting || !form.name || !form.phone || !form.email || !form.address}
                   style={{ width: "100%", padding: "15px", borderRadius: 50, border: "none",
@@ -541,6 +588,13 @@ export default function PressureWashingPage() {
         @media (min-width: 769px) {
           .mobile-menu { display: none !important; }
         input, textarea, select, button { max-width: 100%; box-sizing: border-box; }
+        .pac-container { background: #1E293B !important; border: 1px solid rgba(244,114,182,0.15) !important; border-radius: 12px !important; margin-top: 4px !important; font-family: "Outfit", sans-serif !important; box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important; }
+        .pac-item { padding: 10px 16px !important; border-top: 1px solid rgba(255,255,255,0.06) !important; color: #F8FAFC !important; cursor: pointer !important; font-size: 14px !important; }
+        .pac-item:hover { background: rgba(244,114,182,0.08) !important; }
+        .pac-item-query { color: #F472B6 !important; font-weight: 600 !important; }
+        .pac-matched { color: #7DD3FC !important; }
+        .pac-icon { display: none !important; }
+        .pac-item-selected { background: rgba(244,114,182,0.12) !important; }
         }
       `}</style>
       <Nav /><Hero /><Services /><WhyUs /><BookingSystem /><Areas /><CTA /><Footer />
