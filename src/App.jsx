@@ -543,7 +543,7 @@ function BookingSystem() {
                 <BookingInput label="Full Name" type="text" placeholder="Your full name" value={form.name} onChange={e => update("name", e.target.value)} />
                 <BookingInput label="Phone" type="tel" placeholder="(305) 000-0000" value={form.phone} onChange={e => update("phone", e.target.value)} />
                 <BookingInput label="Email" type="email" placeholder="your@email.com" value={form.email} onChange={e => update("email", e.target.value)} />
-                <BookingInput label="Service Address" type="text" placeholder="Full address in Miami-Dade" value={form.address} onChange={e => update("address", e.target.value)} />
+                <AddressAutocomplete label="Service Address" value={form.address} onChange={v => update("address", v)} placeholder="Start typing your address..." />
                 
                 <button onClick={handleBooking} disabled={submitting || !form.name || !form.phone || !form.email || !form.address}
                   style={{ width: "100%", padding: "15px", borderRadius: 50, border: "none",
