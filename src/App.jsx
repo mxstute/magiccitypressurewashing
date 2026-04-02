@@ -209,8 +209,10 @@ function Services() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
           {items.map(it => (
             <div key={it.title} style={{
-              background: DARK3, borderRadius: 16, padding: "28px", border: "1px solid rgba(255,255,255,0.03)",
-            }}>
+              background: DARK3, borderRadius: 16, padding: "28px", border: "1px solid rgba(255,255,255,0.03)", transition: "all 0.3s ease", cursor: "default",
+            }
+            onMouseEnter={e => { e.currentTarget.style.border = "1px solid rgba(244,114,182,0.2)"; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(244,114,182,0.12)"; }}
+            onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.04)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                 <span style={{ fontSize: 30 }}>{it.icon}</span>
                 <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, color: BLUE }}>{it.price}</span>
@@ -249,7 +251,9 @@ function WhyUs() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
           {reasons.map(r => (
-            <div key={r.title} style={{ background: DARK3, borderRadius: 16, padding: 24, border: "1px solid rgba(255,255,255,0.03)" }}>
+            <div key={r.title} style={{ background: DARK3, borderRadius: 16, padding: 24, border: "1px solid rgba(255,255,255,0.03)", transition: "all 0.3s ease", cursor: "default" }}
+              onMouseEnter={e => { e.currentTarget.style.border = `1px solid ${PINK}33`; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = `0 8px 32px rgba(244,114,182,0.12)`; e.currentTarget.style.background = "rgba(30,41,59,0.8)"; }}
+              onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.03)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = DARK3; }}>
               <div style={{ fontSize: 28, marginBottom: 10 }}>{r.icon}</div>
               <h4 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 600, color: LIGHT, margin: "0 0 6px" }}>{r.title}</h4>
               <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: GRAY, lineHeight: 1.6, margin: 0 }}>{r.desc}</p>
