@@ -152,15 +152,15 @@ function Hero() {
           display: "inline-block", padding: "5px 16px", borderRadius: 50,
           border: "1px solid rgba(125,211,252,0.25)", marginBottom: 24,
           fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: BLUE, letterSpacing: 2, textTransform: "uppercase",
-        }}>South Florida's Exterior Cleaning Experts</div>
+        }}>Miami's #1 Pressure Washing</div>
 
         <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(34px,5.5vw,60px)", fontWeight: 700, color: LIGHT, lineHeight: 1.1, margin: "0 0 8px" }}>
-          Professional
+          Fast, Professional
         </h1>
         <h1 style={{
           fontFamily: "'Playfair Display',serif", fontSize: "clamp(34px,5.5vw,60px)", fontWeight: 700, lineHeight: 1.1, margin: "0 0 20px",
           background: `linear-gradient(135deg, ${BLUE}, ${PINK})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-        }}>Pressure Washing Miami</h1>
+        }}>Pressure Washing</h1>
 
         <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: "clamp(15px,1.8vw,19px)", color: GRAY, lineHeight: 1.7, maxWidth: 540, margin: "0 auto 32px" }}>
           Driveways, patios, building exteriors, roofs, and more — restored to like-new condition. Miami's humidity, mold, and algae don't stand a chance.
@@ -176,8 +176,8 @@ function Hero() {
         </div>
 
         <div style={{ display: "flex", gap: 36, flexWrap: "wrap", justifyContent: "center" }}>
-          {[{ v: "Eco-Safe", l: "Cleaning Products" }, { v: "Free", l: "On-Site Estimates" }, { v: "100%", l: "Satisfaction Guarantee" }].map(s => (
-            <div key={s.l} style={{ textAlign: "center" }}>
+          {[{ v: "Same Day", l: "Service Available" }, { v: "Free", l: "Estimates" }, { v: "100%", l: "Satisfaction" }].map(s => (
+            <div key={s.l} style={{ textAlign: "center", minWidth: 90 }}>
               <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 24, fontWeight: 700, color: LIGHT }}>{s.v}</div>
               <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, color: GRAY, letterSpacing: 1, textTransform: "uppercase" }}>{s.l}</div>
             </div>
@@ -234,18 +234,20 @@ function WhyUs() {
   const reasons = [
     { icon: "💧", title: "South Florida Specialists", desc: "We understand Miami's unique climate — humidity, salt air, and tropical storms. Our methods are built for it." },
     { icon: "🌿", title: "Eco-Friendly Products", desc: "Biodegradable cleaning solutions that are tough on grime but safe for your landscaping and pets." },
-    { icon: "⚡", title: "Same-Week Scheduling", desc: "Fast turnaround without cutting corners. Most jobs completed within 2-4 hours." },
+    { icon: "⚡", title: "Same-Week Scheduling", desc: "Fast turnaround without cutting corners. Most jobs completed within 2–4 hours." },
     { icon: "🛡️", title: "Licensed & Insured", desc: "Full liability coverage on every job. Your property is protected." },
+    { icon: "⭐", title: "5-Star Rated Service", desc: "Hundreds of satisfied customers across Miami-Dade. Our reviews speak for themselves — quality you can trust." },
+    { icon: "💰", title: "Transparent Pricing", desc: "No hidden fees, no surprises. You get a clear quote before we start — and that's the price you pay." },
   ];
 
   return (
-    <section id="whyus" style={{ background: DARK, padding: "80px 24px" }}>
-      <div style={{ maxWidth: 800, margin: "0 auto" }}>
+    <section id="whyus" style={{ background: `linear-gradient(180deg, ${DARK2} 0%, ${DARK} 8%, ${DARK} 92%, ${DARK2} 100%)`, padding: "80px 24px" }}>
+      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: PINK, letterSpacing: 3, textTransform: "uppercase", marginBottom: 10 }}>Why Choose Us</div>
           <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(26px,4vw,38px)", fontWeight: 700, color: LIGHT, margin: 0 }}>Built for Miami's Climate</h2>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px,1fr))", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
           {reasons.map(r => (
             <div key={r.title} style={{ background: DARK3, borderRadius: 16, padding: 24, border: "1px solid rgba(255,255,255,0.03)" }}>
               <div style={{ fontSize: 28, marginBottom: 10 }}>{r.icon}</div>
