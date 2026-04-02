@@ -16,7 +16,10 @@ function PhoneBtn({ full = false }) {
       background: BLUE, color: DARK, border: "none", borderRadius: 50,
       fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700,
       textDecoration: "none", letterSpacing: 0.5, width: full ? "100%" : "auto", justifyContent: "center",
-    }}>📞 {PHONE}</a>
+    , transition: "all 0.2s ease",
+    }}
+    onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(244,114,182,0.35)"; }}
+    onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}>📞 {PHONE}</a>
   );
 }
 
@@ -112,7 +115,7 @@ function Nav() {
         </a>
         <div className="nav-center-links" style={{ display: "flex", alignItems: "center", gap: 36 }}>
           {links.map(l => (
-            <a key={l.label} href={l.href} style={linkStyle}}
+            <a key={l.label} href={l.href} style={linkStyle}
               onMouseEnter={e => e.target.style.color = BLUE}
               onMouseLeave={e => e.target.style.color = LIGHT}>{l.label}</a>
           ))}
@@ -121,8 +124,10 @@ function Nav() {
           <a href={`tel:${PHONE.replace(/\D/g, "")}`} className="nav-phone-btn" style={{
             display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 22px",
             background: BLUE, color: DARK, border: "none", borderRadius: 50,
-            fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: "none",
-          }}>📞 {PHONE}</a>
+            fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: "none", transition: "all 0.2s ease",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(244,114,182,0.35)"; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}>📞 {PHONE}</a>
           <button onClick={() => setMenuOpen(!menuOpen)} className="mobile-menu-btn" style={{
             display: "none", background: "none", border: "none", color: LIGHT, fontSize: 26, cursor: "pointer", padding: 4,
           }}>{menuOpen ? "✕" : "☰"}</button>
@@ -131,7 +136,9 @@ function Nav() {
       {menuOpen && (
         <div className="mobile-menu" style={{ padding: "20px 0 28px", display: "flex", flexDirection: "column", gap: 20, alignItems: "center", background: "rgba(11,17,32,0.98)", borderTop: "1px solid rgba(125,211,252,0.1)" }}>
           {links.map(l => (<a key={l.label} href={l.href} onClick={() => setMenuOpen(false)} style={{ ...linkStyle, fontSize: 15 }}>{l.label}</a>))}
-          <a href={`tel:${PHONE.replace(/\D/g, "")}`} style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 28px", background: BLUE, color: DARK, borderRadius: 50, fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 600, textDecoration: "none" }}>📞 {PHONE}</a>
+          <a href={`tel:${PHONE.replace(/\D/g, "")}`} style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 28px", background: BLUE, color: DARK, borderRadius: 50, fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 600, textDecoration: "none", transition: "all 0.2s ease" }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(244,114,182,0.3)"; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}>📞 {PHONE}</a>
         </div>
       )}
     </nav>
@@ -171,8 +178,10 @@ function Hero() {
           <a href="#services" style={{
             display: "inline-flex", alignItems: "center", gap: 8, padding: "16px 32px",
             background: "transparent", color: PINK, border: `1.5px solid rgba(244,114,182,0.25)`,
-            borderRadius: 50, fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 600, textDecoration: "none",
-          }}>Our Services ↓</a>
+            borderRadius: 50, fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 600, textDecoration: "none", transition: "all 0.2s ease",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; e.currentTarget.style.background = "rgba(125,211,252,0.06)"; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.background = "transparent"; }}>Our Services ↓</a>
         </div>
 
         <div style={{ display: "flex", gap: 36, flexWrap: "wrap", justifyContent: "center" }}>
@@ -209,10 +218,11 @@ function Services() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
           {items.map(it => (
             <div key={it.title} style={{
-              background: DARK3, borderRadius: 16, padding: "28px", border: "1px solid rgba(255,255,255,0.03)", transition: "all 0.3s ease", cursor: "default",
+              background: DARK3, borderRadius: 16, padding: "28px", border: "1px solid rgba(255,255,255,0.03)",
+              transition: "all 0.3s ease",
             }}
             onMouseEnter={e => { e.currentTarget.style.border = "1px solid rgba(244,114,182,0.2)"; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(244,114,182,0.12)"; }}
-            onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.04)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
+            onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.03)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                 <span style={{ fontSize: 30 }}>{it.icon}</span>
                 <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, color: BLUE }}>{it.price}</span>
@@ -251,9 +261,9 @@ function WhyUs() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
           {reasons.map(r => (
-            <div key={r.title} style={{ background: DARK3, borderRadius: 16, padding: 24, border: "1px solid rgba(255,255,255,0.03)", transition: "all 0.3s ease", cursor: "default" }}
-              onMouseEnter={e => { e.currentTarget.style.border = `1px solid ${PINK}33`; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = `0 8px 32px rgba(244,114,182,0.12)`; e.currentTarget.style.background = "rgba(30,41,59,0.8)"; }}
-              onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.03)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = DARK3; }}>
+            <div key={r.title} style={{ background: DARK3, borderRadius: 16, padding: 24, border: "1px solid rgba(255,255,255,0.03)", transition: "all 0.3s ease" }}
+              onMouseEnter={e => { e.currentTarget.style.border = "1px solid rgba(244,114,182,0.2)"; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(244,114,182,0.12)"; }}
+              onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.03)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
               <div style={{ fontSize: 28, marginBottom: 10 }}>{r.icon}</div>
               <h4 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 600, color: LIGHT, margin: "0 0 6px" }}>{r.title}</h4>
               <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: GRAY, lineHeight: 1.6, margin: 0 }}>{r.desc}</p>
@@ -274,7 +284,9 @@ function Areas() {
         <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(26px,4vw,38px)", fontWeight: 700, color: LIGHT, margin: "0 0 24px" }}>Pressure Washing All of Miami-Dade</h2>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 24 }}>
           {a.map(x => (
-            <span key={x} style={{ padding: "7px 16px", borderRadius: 50, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 500, color: "#CBD5E1" }}>{x}</span>
+            <span key={x} style={{ padding: "7px 16px", borderRadius: 50, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 500, color: "#CBD5E1", transition: "all 0.25s ease", cursor: "default" }}
+              onMouseEnter={e => { e.currentTarget.style.border = "1px solid rgba(244,114,182,0.35)"; e.currentTarget.style.background = "rgba(244,114,182,0.06)"; e.currentTarget.style.color = "#F472B6"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+              onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.05)"; e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#CBD5E1"; e.currentTarget.style.transform = "translateY(0)"; }}>{x}</span>
           ))}
         </div>
       </div>
@@ -326,7 +338,7 @@ function Footer() {
             ))}
           </div>
           <a href="https://magiccityservicesmiami.com" target="_blank" rel="noopener noreferrer"
-            style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 32px", background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, borderRadius: 50, textDecoration: "none", fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, color: "#fff", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: "0 4px 20px rgba(244,114,182,0.3)" }}
+            style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 32px", background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, transition: "all 0.2s ease", borderRadius: 50, textDecoration: "none", fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, color: "#fff", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: "0 4px 20px rgba(244,114,182,0.3)" }}
             onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.boxShadow = "0 6px 30px rgba(244,114,182,0.45)"; }}
             onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(244,114,182,0.3)"; }}>
             View All Magic City Services
@@ -535,7 +547,7 @@ function BookingSystem() {
                 
                 <button onClick={handleBooking} disabled={submitting || !form.name || !form.phone || !form.email || !form.address}
                   style={{ width: "100%", padding: "15px", borderRadius: 50, border: "none",
-                    background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, color: "#fff",
+                    background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, transition: "all 0.2s ease", color: "#fff",
                     fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 700, cursor: "pointer", marginTop: 8, opacity: submitting ? 0.6 : 1 }}>
                   {submitting ? "Submitting..." : "Book Free On-Site Estimate"}
                 </button>
@@ -579,7 +591,7 @@ function BookingSystem() {
                 </div>
                 <button type="submit" disabled={submitting}
                   style={{ width: "100%", padding: "15px", borderRadius: 50, border: "none",
-                    background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, color: "#fff",
+                    background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, transition: "all 0.2s ease", color: "#fff",
                     fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 700, cursor: "pointer", marginTop: 8, opacity: submitting ? 0.6 : 1 }}>
                   {submitting ? "Sending..." : "Submit Quote Request"}
                 </button>
@@ -598,7 +610,7 @@ function BookingSystem() {
             </p>
             <a href={`tel:${PHONE.replace(/[^0-9]/g, "")}`} style={{
               display: "inline-flex", alignItems: "center", gap: 12, padding: "18px 44px",
-              background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, color: "#fff",
+              background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, transition: "all 0.2s ease", color: "#fff",
               borderRadius: 50, fontFamily: "'Outfit',sans-serif", fontSize: 22, fontWeight: 700,
               textDecoration: "none" }}>
               {PHONE}
