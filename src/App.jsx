@@ -112,7 +112,7 @@ function Nav() {
         </a>
         <div className="nav-center-links" style={{ display: "flex", alignItems: "center", gap: 36 }}>
           {links.map(l => (
-            <a key={l.label} href={l.href} style={linkStyle}
+            <a key={l.label} href={l.href} style={linkStyle}}
               onMouseEnter={e => e.target.style.color = BLUE}
               onMouseLeave={e => e.target.style.color = LIGHT}>{l.label}</a>
           ))}
@@ -210,7 +210,7 @@ function Services() {
           {items.map(it => (
             <div key={it.title} style={{
               background: DARK3, borderRadius: 16, padding: "28px", border: "1px solid rgba(255,255,255,0.03)", transition: "all 0.3s ease", cursor: "default",
-            }
+            }}
             onMouseEnter={e => { e.currentTarget.style.border = "1px solid rgba(244,114,182,0.2)"; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(244,114,182,0.12)"; }}
             onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.04)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
