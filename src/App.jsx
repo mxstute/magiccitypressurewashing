@@ -16,7 +16,7 @@ function PhoneBtn({ full = false }) {
       background: BLUE, color: DARK, border: "none", borderRadius: 50,
       fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700,
       textDecoration: "none", letterSpacing: 0.5, width: full ? "100%" : "auto", justifyContent: "center",
-    , transition: "all 0.2s ease",
+      transition: "all 0.2s ease",
     }}
     onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(244,114,182,0.35)"; }}
     onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}>📞 {PHONE}</a>
