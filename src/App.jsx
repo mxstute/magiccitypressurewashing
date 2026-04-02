@@ -354,11 +354,12 @@ const bookingPackages = [
 ];
 const timeSlots = ["8:00 AM", "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
 
-function BookingInput({ label, ...props }) {
+function BookingInput({ label, type, ...props }) {
+  const isDate = type === "date";
   return (
     <div style={{ marginBottom: 16 }}>
       <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
-      <input {...props} style={{ width: "100%", padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box", ...props.style }}
+      <input type={type} {...props} style={{ width: "100%", padding: isDate ? "13px 16px" : "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box", WebkitAppearance: "none", MozAppearance: "none", appearance: "none", colorScheme: "dark", minHeight: isDate ? 48 : "auto", ...props.style }}
         onFocus={e => e.target.style.borderColor = "#7DD3FC55"} onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.08)"} />
     </div>
   );
@@ -448,7 +449,7 @@ function BookingSystem() {
 
         {/* ====== BOOK TAB ====== */}
         {tab === "book" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "28px 28px", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "28px 32px", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
             {/* Progress */}
             <div style={{ display: "flex", gap: 8, marginBottom: 28 }}>
               {["Package", "Date & Time", "Your Info"].map((s, i) => (
@@ -551,7 +552,7 @@ function BookingSystem() {
 
         {/* ====== QUOTE TAB ====== */}
         {tab === "quote" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "28px 28px", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "28px 32px", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
             {quoteSubmitted ? (
               <div style={{ textAlign: "center", padding: "40px 0" }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
@@ -636,6 +637,9 @@ export default function PressureWashingPage() {
         @media (min-width: 769px) {
           .mobile-menu { display: none !important; }
         input, textarea, select, button { max-width: 100%; box-sizing: border-box; }
+        input[type="date"] { color-scheme: dark; -webkit-appearance: none; min-height: 48px; }
+        input[type="date"]::-webkit-date-and-time-value { text-align: left; padding: 2px 0; }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; padding: 4px; }
         .pac-container { background: #1E293B !important; border: 1px solid rgba(244,114,182,0.15) !important; border-radius: 12px !important; margin-top: 4px !important; font-family: "Outfit", sans-serif !important; box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important; }
         .pac-item { padding: 10px 16px !important; border-top: 1px solid rgba(255,255,255,0.06) !important; color: #F8FAFC !important; cursor: pointer !important; font-size: 14px !important; }
         .pac-item:hover { background: rgba(244,114,182,0.08) !important; }
