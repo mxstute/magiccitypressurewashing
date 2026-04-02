@@ -492,18 +492,11 @@ function BookingSystem() {
                 <BookingInput label="Preferred Date" type="date" min={minDate} value={form.date} onChange={e => update("date", e.target.value)} />
                 <div style={{ marginBottom: 16 }}>
                   <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Preferred Time</label>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    {timeSlots.map(t => (
-                      <button key={t} onClick={() => update("time", t)}
-                        style={{ padding: "9px 14px", borderRadius: 10, cursor: "pointer",
-                          background: form.time === t ? PINK : "rgba(255,255,255,0.03)",
-                          border: form.time === t ? "none" : "1px solid rgba(255,255,255,0.06)",
-                          color: form.time === t ? "#fff" : GRAY,
-                          fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 500, transition: "all 0.15s" }}>
-                        {t}
-                      </button>
-                    ))}
-                  </div>
+                  <select value={form.time} onChange={e => update("time", e.target.value)}
+                    style={{ width: "100%", padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box", WebkitAppearance: "none", MozAppearance: "none", appearance: "none", colorScheme: "dark", cursor: "pointer", minHeight: 48 }}>
+                    <option value="" style={{ background: "#1E293B" }}>Select a time...</option>
+                    {timeSlots.map(t => <option key={t} value={t} style={{ background: "#1E293B", color: "#F8FAFC" }}>{t}</option>)}
+                  </select>
                 </div>
                 <button onClick={() => { if (form.date && form.time) setStep(3); else alert("Please select a date and time."); }}
                   style={{ width: "100%", padding: "14px", borderRadius: 50, border: "none", background: (form.date && form.time) ? PINK : GRAY, color: "#fff", fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 700, cursor: "pointer", marginTop: 8 }}>
@@ -640,6 +633,8 @@ export default function PressureWashingPage() {
         input[type="date"] { color-scheme: dark; -webkit-appearance: none; min-height: 48px; }
         input[type="date"]::-webkit-date-and-time-value { text-align: left; padding: 2px 0; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; padding: 4px; }
+        select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%2394A3B8'/%3E%3C/svg%3E") !important; background-repeat: no-repeat !important; background-position: right 16px center !important; }
+        select option { background: #1E293B; color: #F8FAFC; }
         .pac-container { background: #1E293B !important; border: 1px solid rgba(244,114,182,0.15) !important; border-radius: 12px !important; margin-top: 4px !important; font-family: "Outfit", sans-serif !important; box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important; }
         .pac-item { padding: 10px 16px !important; border-top: 1px solid rgba(255,255,255,0.06) !important; color: #F8FAFC !important; cursor: pointer !important; font-size: 14px !important; }
         .pac-item:hover { background: rgba(244,114,182,0.08) !important; }
