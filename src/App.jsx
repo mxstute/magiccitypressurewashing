@@ -69,6 +69,16 @@ export default function PressureWashingSite() {
         html, body, #root { margin: 0; padding: 0; background: #0B1120; min-height: 100vh; }
         input, textarea, select, button { max-width: 100%; box-sizing: border-box; }
         section[id], footer[id] { scroll-margin-top: 60px; }
+        /* Mobile nav fix */
+        .nav-links { display: flex; gap: 20px; }
+        @media (max-width: 640px) {
+          .nav-links { display: none !important; }
+          nav { grid-template-columns: 1fr auto !important; padding: 12px 16px !important; }
+          .nav-logo-text { font-size: 14px !important; }
+          .nav-sub-text { font-size: 9px !important; letter-spacing: 2px !important; }
+          .phone-btn { padding: 8px 12px !important; font-size: 11px !important; }
+        }
+
 
         .pkg-card { transition: all 0.25s ease !important; }
         .pkg-card:hover { 
@@ -148,11 +158,11 @@ export default function PressureWashingSite() {
             </div>
           </div>
           <div>
-            <div style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.5px" }}>MAGIC CITY</div>
-            <div style={{ fontSize: "7px", color: "#94A3B8", letterSpacing: "2px" }}>PRESSURE WASHING</div>
+            <div style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.5px" }} className="nav-logo-text">MAGIC CITY</div>
+            <div style={{ fontSize: "7px", color: "#94A3B8", letterSpacing: "2px" }} className="nav-sub-text">PRESSURE WASHING</div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: "20px", fontSize: "12px", fontWeight: 500 }}>
+        <div className="nav-links" style={{ display: "flex", gap: "20px", fontSize: "12px", fontWeight: 500 }}>
           {[
             { label: "PRICING", target: "pricing" },
             { label: "BOOK NOW", target: "booking" },
