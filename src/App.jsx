@@ -9,15 +9,15 @@ import AddressAutocomplete from "./AddressAutocomplete";
 */
 
 const PACKAGES = [
-  { name: "Driveway / Sidewalk", price: "$199", deposit: 50, note: "Standard residential driveway", tag: null },
-  { name: "House Exterior (1-Story)", price: "$299+", deposit: 75, note: "Stucco, siding, brick, painted", tag: null },
-  { name: "House Exterior (2-Story)", price: "$499+", deposit: 250, note: "Full two-story exterior wash", tag: null },
-  { name: "Pool Deck / Patio", price: "$149+", deposit: 50, note: "Pavers, concrete, natural stone", tag: null },
+  { name: "Driveway / Sidewalk", price: "$250", deposit: 50, note: "Standard residential driveway", tag: null },
+  { name: "House Exterior (1-Story)", price: "$350+", deposit: 75, note: "Stucco, siding, brick, painted", tag: null },
+  { name: "House Exterior (2-Story)", price: "$600+", deposit: 250, note: "Full two-story exterior wash", tag: null },
+  { name: "Pool Deck / Patio", price: "$200", deposit: 50, note: "Pavers, concrete, natural stone", tag: null },
   { name: "Roof Soft Wash (Shingle)", price: "$399+", deposit: 200, note: "Safe low-pressure cleaning", tag: null },
   { name: "Roof Soft Wash (Tile)", price: "$499+", deposit: 250, note: "Tile-safe chemical treatment", tag: null },
   { name: "Roof Soft Wash (2-Story Tile)", price: "$699+", deposit: 350, note: "Two-story tile roof wash", tag: null },
   { name: "Full Property Package", price: "$999+", deposit: 500, note: "Driveway + house + roof + deck", tag: "Best Value" },
-  { name: "Fence / Wall Cleaning", price: "$149", deposit: 40, note: "Wood, vinyl, concrete, stucco", tag: null },
+  { name: "Fence / Wall Cleaning", price: "$200", deposit: 40, note: "Wood, vinyl, concrete, stucco", tag: null },
 ];
 
 const PW_SERVICES = [
