@@ -34,6 +34,150 @@ const AREAS = [
   "Weston", "Boca Raton", "West Palm Beach", "Homestead", "Miami Gardens",
 ];
 
+const PACKAGE_SPECS = {
+  "Driveway / Sidewalk": {
+    time: "1-2 hours",
+    items: [
+      "Full surface pressure wash (up to 4,500 PSI commercial-grade equipment)",
+      "Pre-treatment with degreaser for oil and grease stains",
+      "Edge-to-edge cleaning (driveway, walkways, and connected sidewalks)",
+      "Weed and debris removal from expansion joints and cracks",
+      "Mold, mildew, and algae treatment",
+      "Rinse and drainage management (water directed away from home and landscaping)",
+      "Final walk-through inspection",
+    ],
+  },
+  "House Exterior (1-Story)": {
+    time: "2-3 hours",
+    items: [
+      "Full soft wash of all exterior walls (low-pressure with professional cleaning solution)",
+      "Mold, mildew, algae, and dirt buildup removal",
+      "Eave and soffit cleaning",
+      "Fascia board cleaning",
+      "Exterior window frame rinse",
+      "Downspout exterior rinse",
+      "Front porch / entryway wash",
+      "Garage door exterior wash",
+      "Foundation base rinse",
+      "Landscaping protection (pre-soak plants, cover sensitive areas)",
+      "Final walk-through inspection",
+    ],
+  },
+  "House Exterior (2-Story)": {
+    time: "3-5 hours",
+    tierUp: "Everything in 1-Story House Exterior, PLUS:",
+    items: [
+      "Extended-reach soft wash for second-story walls, eaves, and soffits",
+      "Upper-level window frame rinse",
+      "Balcony / upper deck railing wash (if accessible)",
+      "Additional time and equipment for height access",
+      "Price varies based on total square footage and level of buildup",
+    ],
+  },
+  "Pool Deck / Patio": {
+    time: "1-2 hours",
+    items: [
+      "Full pressure wash of pool deck surface (pavers, concrete, tile, or stone)",
+      "Patio and sitting area cleaning",
+      "Mold and algae removal (especially in shaded/wet areas)",
+      "Expansion joint and grout line cleaning",
+      "Screen enclosure frame rinse (if applicable)",
+      "Surrounding walkway cleaning",
+      "Debris removal and rinse-off",
+      "Final inspection",
+    ],
+  },
+  "Roof Soft Wash (Shingle)": {
+    time: "2-3 hours",
+    items: [
+      "Low-pressure soft wash application (NO high-pressure on shingles)",
+      "Professional-grade algae, mold, and lichen treatment solution",
+      "Full roof surface treatment (all shingle faces)",
+      "Ridge cap and peak cleaning",
+      "Gutter exterior face rinse",
+      "Rinse and runoff management to protect landscaping",
+      "Prevents black streaks from returning for 12-18 months",
+      "Final visual inspection from ground level",
+    ],
+  },
+  "Roof Soft Wash (Tile)": {
+    time: "2-4 hours",
+    tierUp: "Everything in Shingle Roof Wash, PLUS:",
+    items: [
+      "Tile-safe low-pressure chemical treatment",
+      "Mold and organic growth removal between tile ridges",
+      "Barrel tile and flat tile compatible",
+      "Higher solution concentration for heavy South Florida buildup",
+    ],
+  },
+  "Full Property Package": {
+    time: "5-8 hours (may require full day)",
+    items: [
+      "Driveway and sidewalk pressure wash",
+      "Full house exterior soft wash (1 or 2 story)",
+      "Pool deck / patio cleaning",
+      "Roof soft wash",
+      "Fence / wall cleaning (if applicable)",
+      "Walkways, pathways, and entryway cleaning",
+      "Garage floor rinse",
+      "Trash can area rinse",
+      "Full property walk-through and final inspection",
+      "Best value — saves $200-$400+ vs. booking individually",
+    ],
+  },
+  "Fence / Wall Cleaning": {
+    time: "1-1.5 hours",
+    items: [
+      "Full pressure wash of fence (wood, vinyl, aluminum, or chain-link)",
+      "Both sides cleaned (where accessible)",
+      "Mold, mildew, and green algae removal",
+      "Gate and post cleaning",
+      "Retaining wall and perimeter wall cleaning (if applicable)",
+      "Final inspection",
+    ],
+  },
+};
+
+const PW_ADDON_SPECS = {
+  "Gutter Cleaning": {
+    price: "$75-$125",
+    items: [
+      "Remove leaves, debris, and buildup from all gutters",
+      "Downspout flush to ensure proper drainage",
+      "Gutter exterior face rinse",
+      "Debris bagged and removed",
+    ],
+  },
+  "Window Washing": {
+    price: "$10/window",
+    items: [
+      "Interior and exterior glass cleaning (streak-free)",
+      "Frame and sill wipe-down",
+      "Screen dusting",
+      "Most homes: 15-25 windows = $150-$250",
+    ],
+  },
+  "Concrete Sealing": {
+    price: "$2.50/sq ft",
+    items: [
+      "Applied after pressure wash (surface must be clean and dry)",
+      "Clear or wet-look sealant options",
+      "Protects against staining, mold regrowth, and UV damage",
+      "Lasts 1-3 years depending on traffic and exposure",
+    ],
+  },
+  "Roof Tile Sealing": {
+    price: "$2.85/sq ft",
+    items: [
+      "Applied after soft wash (surface must be clean and dry)",
+      "Prevents moisture absorption and algae regrowth",
+      "Clear protective coat — does not change tile appearance",
+    ],
+  },
+};
+
+const PROPERTY_SIZE_NOTE = "All prices listed are for standard single-family homes up to approximately 2,000 sq ft. Larger properties, commercial buildings, multi-unit residences, and HOA common areas may require custom quotes.";
+
 const TIMES = [];
 for (let h = 7; h <= 21; h++) {
   for (let m = 0; m < 60; m += 15) {
@@ -58,6 +202,7 @@ export default function PressureWashingSite() {
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [hoveredArea, setHoveredArea] = useState(null);
+  const [expandedPkg, setExpandedPkg] = useState({});
 
   const selectedPackage = selectedPkg !== null ? PACKAGES[selectedPkg] : null;
   const depositAmount = selectedPackage ? selectedPackage.deposit : 0;
@@ -449,23 +594,86 @@ export default function PressureWashingSite() {
       </section>
 
       {/* PRICING */}
-      <section style={{ padding: "50px 16px", background: "linear-gradient(180deg, #0B1120 0%, #131B2E 100%)" }}>
+      <section id="pricing" style={{ padding: "50px 16px", background: "linear-gradient(180deg, #0B1120 0%, #131B2E 100%)" }}>
         <div style={{ maxWidth: "600px", margin: "0 auto" }}>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "26px", textAlign: "center", marginBottom: "6px" }}>Transparent <span style={{ color: "#7DD3FC" }}>Pricing</span></h2>
           <p style={{ textAlign: "center", fontSize: "13px", color: "#94A3B8", marginBottom: "24px" }}>No hidden fees. No surprises. Just honest pricing.</p>
-          {PACKAGES.map((pkg, i) => (
-            <div key={i} className="price-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", marginBottom: "6px", borderRadius: "12px", background: "rgba(30,41,59,0.4)", border: "1px solid rgba(148,163,184,0.08)" }}>
-              <div>
-                <div style={{ fontSize: "14px", fontWeight: 600 }}>{pkg.name}</div>
-                <div style={{ fontSize: "10px", color: "#94A3B8", marginTop: "2px" }}>{pkg.note}</div>
+          {PACKAGES.map((pkg, i) => {
+            const specs = PACKAGE_SPECS[pkg.name];
+            const isExpanded = expandedPkg[pkg.name];
+            return (
+              <div key={i} style={{ marginBottom: "10px" }}>
+                <div className="price-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", borderRadius: isExpanded ? "12px 12px 0 0" : "12px", background: "rgba(30,41,59,0.4)", border: "1px solid rgba(148,163,184,0.08)" }}>
+                  <div>
+                    <div style={{ fontSize: "14px", fontWeight: 600 }}>{pkg.name}</div>
+                    <div style={{ fontSize: "10px", color: "#94A3B8", marginTop: "2px" }}>{pkg.note}</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: "16px", fontWeight: 700, color: "#7DD3FC" }}>{pkg.price}</div>
+                    <div style={{ fontSize: "10px", color: "#22C55E", marginTop: "2px" }}>${pkg.deposit} deposit to book</div>
+                  </div>
+                </div>
+                {specs && (
+                  <>
+                    <button
+                      onClick={() => setExpandedPkg(prev => ({ ...prev, [pkg.name]: !prev[pkg.name] }))}
+                      style={{ width: "100%", padding: "10px 16px", border: "none", borderTop: "1px solid rgba(148,163,184,0.06)", background: "rgba(30,41,59,0.25)", color: "#F472B6", fontSize: "12px", fontWeight: 500, cursor: "pointer", fontFamily: "'Outfit', sans-serif", borderRadius: isExpanded ? "0" : "0 0 12px 12px", transition: "all 0.2s" }}
+                    >
+                      {isExpanded ? "Hide Details \u25B4" : "See What's Included \u25BE"}
+                    </button>
+                    <div style={{ maxHeight: isExpanded ? "1200px" : "0", overflow: "hidden", transition: "max-height 0.4s ease" }}>
+                      <div style={{ background: "rgba(244,114,182,0.04)", border: "1px solid rgba(244,114,182,0.12)", borderTop: "none", borderRadius: "0 0 10px 10px", padding: "16px" }}>
+                        <div style={{ display: "inline-block", padding: "4px 12px", borderRadius: "12px", background: "rgba(125,211,252,0.1)", border: "1px solid rgba(125,211,252,0.2)", fontSize: "11px", color: "#7DD3FC", marginBottom: "12px" }}>
+                          Estimated Time: {specs.time}
+                        </div>
+                        {specs.tierUp && (
+                          <p style={{ fontSize: "13px", color: "#F472B6", fontStyle: "italic", margin: "0 0 8px" }}>{specs.tierUp}</p>
+                        )}
+                        {specs.items.map((item, j) => (
+                          <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "4px" }}>
+                            <span style={{ color: "#22C55E", fontSize: "12px", lineHeight: "1.8", flexShrink: 0 }}>{"\u2713"}</span>
+                            <span style={{ fontSize: "13px", color: "#CBD5E1", lineHeight: 1.8 }}>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "16px", fontWeight: 700, color: "#7DD3FC" }}>{pkg.price}</div>
-                <div style={{ fontSize: "10px", color: "#22C55E", marginTop: "2px" }}>${pkg.deposit} deposit to book</div>
+            );
+          })}
+
+          <h3 style={{ fontSize: "18px", fontWeight: 600, marginTop: "32px", marginBottom: "16px", textAlign: "center", color: "#F8FAFC" }}>Add-On Services</h3>
+          {Object.entries(PW_ADDON_SPECS).map(([name, spec], i) => {
+            const isExpanded = expandedPkg["addon_" + name];
+            return (
+              <div key={i} style={{ marginBottom: "8px" }}>
+                <div className="price-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", borderRadius: isExpanded ? "12px 12px 0 0" : "12px", background: "rgba(30,41,59,0.35)", border: "1px solid rgba(148,163,184,0.08)", fontSize: "14px" }}>
+                  <span style={{ fontWeight: 500 }}>{name}</span>
+                  <span style={{ color: "#7DD3FC", fontWeight: 600 }}>{spec.price}</span>
+                </div>
+                <button
+                  onClick={() => setExpandedPkg(prev => ({ ...prev, ["addon_" + name]: !prev["addon_" + name] }))}
+                  style={{ width: "100%", padding: "8px 16px", border: "none", borderTop: "1px solid rgba(148,163,184,0.06)", background: "rgba(30,41,59,0.2)", color: "#F472B6", fontSize: "12px", fontWeight: 500, cursor: "pointer", fontFamily: "'Outfit', sans-serif", borderRadius: isExpanded ? "0" : "0 0 12px 12px", transition: "all 0.2s" }}
+                >
+                  {isExpanded ? "Hide Details \u25B4" : "See What's Included \u25BE"}
+                </button>
+                <div style={{ maxHeight: isExpanded ? "600px" : "0", overflow: "hidden", transition: "max-height 0.35s ease" }}>
+                  <div style={{ background: "rgba(244,114,182,0.04)", border: "1px solid rgba(244,114,182,0.12)", borderTop: "none", borderRadius: "0 0 10px 10px", padding: "14px 16px" }}>
+                    {spec.items.map((item, j) => (
+                      <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "3px" }}>
+                        <span style={{ color: "#22C55E", fontSize: "12px", lineHeight: "1.8", flexShrink: 0 }}>{"\u2713"}</span>
+                        <span style={{ fontSize: "13px", color: "#CBD5E1", lineHeight: 1.8 }}>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
-          <p style={{ textAlign: "center", fontSize: "11px", color: "#94A3B8", marginTop: "12px" }}>Deposit secures your appointment. Remaining balance due after completed service. Call to book with no deposit.</p>
+            );
+          })}
+
+          <p style={{ textAlign: "center", fontSize: "11px", color: "#94A3B8", marginTop: "20px", lineHeight: 1.6 }}>{PROPERTY_SIZE_NOTE}</p>
+          <p style={{ textAlign: "center", fontSize: "11px", color: "#94A3B8", marginTop: "8px" }}>Deposit secures your appointment. Remaining balance due after completed service. Call to book with no deposit.</p>
         </div>
       </section>
 
