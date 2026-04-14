@@ -4,19 +4,20 @@ import AddressAutocomplete from "./AddressAutocomplete";
 /*
   MAGIC CITY PRESSURE WASHING — v3
   Layout: Hero → Booking (section 2) → Pricing → Services → Areas → Footer
-  Deposit: $25 / $50 / $75
+  Deposit: 25% under $400, 50% over $400
   Phone: (305) 783-3133
 */
 
 const PACKAGES = [
-  { name: "Driveway / Sidewalk", price: "$199", deposit: 25, note: "Standard residential driveway", tag: null },
-  { name: "House Exterior (1-Story)", price: "$299", deposit: 50, note: "Stucco, siding, brick, painted", tag: null },
-  { name: "House Exterior (2-Story)", price: "$499+", deposit: 50, note: "Full two-story exterior wash", tag: null },
-  { name: "Pool Deck / Patio", price: "$149+", deposit: 25, note: "Pavers, concrete, natural stone", tag: null },
-  { name: "Roof Soft Wash (Shingle)", price: "$399+", deposit: 50, note: "Safe low-pressure cleaning", tag: null },
-  { name: "Roof Soft Wash (Tile)", price: "$499+", deposit: 50, note: "Tile-safe chemical treatment", tag: null },
-  { name: "Full Property Package", price: "$999+", deposit: 75, note: "Driveway + house + roof + deck", tag: "Best Value" },
-  { name: "Fence / Wall Cleaning", price: "$149+", deposit: 25, note: "Wood, vinyl, concrete, stucco", tag: null },
+  { name: "Driveway / Sidewalk", price: "$199", deposit: 50, note: "Standard residential driveway", tag: null },
+  { name: "House Exterior (1-Story)", price: "$299+", deposit: 75, note: "Stucco, siding, brick, painted", tag: null },
+  { name: "House Exterior (2-Story)", price: "$499+", deposit: 250, note: "Full two-story exterior wash", tag: null },
+  { name: "Pool Deck / Patio", price: "$149+", deposit: 50, note: "Pavers, concrete, natural stone", tag: null },
+  { name: "Roof Soft Wash (Shingle)", price: "$399+", deposit: 200, note: "Safe low-pressure cleaning", tag: null },
+  { name: "Roof Soft Wash (Tile)", price: "$499+", deposit: 250, note: "Tile-safe chemical treatment", tag: null },
+  { name: "Roof Soft Wash (2-Story Tile)", price: "$699+", deposit: 350, note: "Two-story tile roof wash", tag: null },
+  { name: "Full Property Package", price: "$999+", deposit: 500, note: "Driveway + house + roof + deck", tag: "Best Value" },
+  { name: "Fence / Wall Cleaning", price: "$149", deposit: 40, note: "Wood, vinyl, concrete, stucco", tag: null },
 ];
 
 const PW_SERVICES = [
@@ -108,6 +109,15 @@ const PACKAGE_SPECS = {
       "Mold and organic growth removal between tile ridges",
       "Barrel tile and flat tile compatible",
       "Higher solution concentration for heavy South Florida buildup",
+    ],
+  },
+  "Roof Soft Wash (2-Story Tile)": {
+    time: "3-5 hours",
+    tierUp: "Everything in Tile Roof Wash, PLUS:",
+    items: [
+      "Extended reach and equipment for two-story height",
+      "Additional safety measures and setup time",
+      "Full upper and lower roof plane coverage",
     ],
   },
   "Full Property Package": {
