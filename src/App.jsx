@@ -11,14 +11,14 @@ function trackPhoneClick() { if (typeof gtag === "function") gtag("event", "conv
 */
 
 const PACKAGES = [
-  { name: "Driveway / Sidewalk", price: "$250", deposit: 50, note: "Standard residential driveway", tag: null },
-  { name: "House Exterior (1-Story)", price: "$350+", deposit: 75, note: "Stucco, siding, brick, painted", tag: null },
-  { name: "House Exterior (2-Story)", price: "$600+", deposit: 250, note: "Full two-story exterior wash", tag: null },
-  { name: "Pool Deck / Patio", price: "$200", deposit: 50, note: "Pavers, concrete, natural stone", tag: null },
-  { name: "Roof Soft Wash (Shingle)", price: "$399+", deposit: 200, note: "Safe low-pressure cleaning", tag: null },
-  { name: "Roof Soft Wash (Tile)", price: "$499+", deposit: 250, note: "Tile-safe chemical treatment", tag: null },
-  { name: "Roof Soft Wash (2-Story Tile)", price: "$699+", deposit: 350, note: "Two-story tile roof wash", tag: null },
-  { name: "Full Property Package", price: "$999+", deposit: 500, note: "Driveway + house + roof + deck", tag: "Best Value" },
+  { name: "Driveway / Sidewalk", price: "$250", deposit: 50, note: "Up to ~1,000 sq ft; larger priced by size", tag: null },
+  { name: "House Exterior (1-Story)", price: "$350-$450", deposit: 75, note: "Stucco, siding, brick, painted", tag: null },
+  { name: "House Exterior (2-Story)", price: "$600-$900", deposit: 250, note: "Full two-story exterior wash", tag: null },
+  { name: "Pool Deck / Patio", price: "$200", deposit: 50, note: "Up to ~600 sq ft; pavers, concrete, stone", tag: null },
+  { name: "Roof Soft Wash (Shingle)", price: "$449+", deposit: 225, note: "Safe low-pressure cleaning", tag: null },
+  { name: "Roof Soft Wash (Tile)", price: "$549+", deposit: 275, note: "Tile-safe chemical treatment", tag: null },
+  { name: "Roof Soft Wash (2-Story Tile)", price: "$799+", deposit: 400, note: "Two-story tile roof wash", tag: null },
+  { name: "Full Property Package", price: "$1,199+", deposit: 600, note: "Driveway + house + roof + deck", tag: "Best Value" },
   { name: "Fence / Wall Cleaning", price: "$200", deposit: 40, note: "Wood, vinyl, concrete, stucco", tag: null },
 ];
 
@@ -152,7 +152,7 @@ const PACKAGE_SPECS = {
 
 const PW_ADDON_SPECS = {
   "Gutter Cleaning": {
-    price: "$75-$125",
+    price: "$95 (1-story) / $150 (2-story)",
     items: [
       "Remove leaves, debris, and buildup from all gutters",
       "Downspout flush to ensure proper drainage",
@@ -161,7 +161,7 @@ const PW_ADDON_SPECS = {
     ],
   },
   "Window Washing": {
-    price: "$10/window",
+    price: "$10/window ($150 min)",
     items: [
       "Interior and exterior glass cleaning (streak-free)",
       "Frame and sill wipe-down",
@@ -170,7 +170,7 @@ const PW_ADDON_SPECS = {
     ],
   },
   "Concrete Sealing": {
-    price: "$2.50/sq ft",
+    price: "$1.50/sq ft ($600 min)",
     items: [
       "Applied after pressure wash (surface must be clean and dry)",
       "Clear or wet-look sealant options",
@@ -179,11 +179,11 @@ const PW_ADDON_SPECS = {
     ],
   },
   "Roof Tile Sealing": {
-    price: "$2.85/sq ft",
+    price: "$1.25/sq ft clear · $2.50/sq ft coated",
     items: [
       "Applied after soft wash (surface must be clean and dry)",
       "Prevents moisture absorption and algae regrowth",
-      "Clear protective coat — does not change tile appearance",
+      "Clear sealer ($1.25/sq ft) does not change tile appearance; colored waterproof coating available ($2.50/sq ft)",
     ],
   },
 };
@@ -597,7 +597,7 @@ export default function PressureWashingSite() {
               <div style={{ fontSize: "48px", marginBottom: "16px" }}>📞</div>
               <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "22px", margin: "0 0 8px" }}>Call Us Directly</h3>
               <p style={{ fontSize: "13px", color: "#94A3B8", marginBottom: "6px" }}>Speak with a team member right now</p>
-              <div style={{ display: "inline-block", padding: "6px 14px", borderRadius: "8px", marginBottom: "20px", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.15)", fontSize: "12px", color: "#22C55E", fontWeight: 500 }}>No deposit required — book over the phone for free</div>
+              <div style={{ display: "inline-block", padding: "6px 14px", borderRadius: "8px", marginBottom: "20px", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.15)", fontSize: "12px", color: "#22C55E", fontWeight: 500 }}>Free quotes by phone — call anytime, 24/7</div>
               <br />
               <a onClick={trackPhoneClick} href="tel:3057833133" style={{ display: "inline-block", padding: "14px 32px", borderRadius: "12px", background: "linear-gradient(135deg, #7DD3FC, #38BDF8)", color: "#0B1120", fontSize: "18px", fontWeight: 700, textDecoration: "none", fontFamily: "inherit" }}>(305) 783-3133</a>
               <p style={{ fontSize: "12px", color: "#94A3B8", marginTop: "16px" }}>Available 7 AM – 9 PM, 7 days a week</p>

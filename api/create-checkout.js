@@ -1,5 +1,18 @@
 import Stripe from 'stripe';
 
+// Deposit amounts are set here on the server so the browser can't change them.
+const DEPOSITS = {
+  'Driveway / Sidewalk': 50,
+  'House Exterior (1-Story)': 75,
+  'House Exterior (2-Story)': 250,
+  'Pool Deck / Patio': 50,
+  'Roof Soft Wash (Shingle)': 225,
+  'Roof Soft Wash (Tile)': 275,
+  'Roof Soft Wash (2-Story Tile)': 400,
+  'Full Property Package': 600,
+  'Fence / Wall Cleaning': 40,
+};
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -15,10 +28,14 @@ export default async function handler(req, res) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   try {
-    const { packageName, price, customerName, customerEmail, customerPhone, date, time, address } = req.body;
+    const { packageName, customerName, customerEmail, customerPhone, date, time, address } = req.body;
 
-    if (!packageName || !price || !customerEmail) {
+    if (!packageName || !customerEmail) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+    const deposit = DEPOSITS[packageName];
+    if (!deposit) {
+      return res.status(400).json({ error: 'Unknown package' });
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -32,7 +49,7 @@ export default async function handler(req, res) {
             name: `Magic City Pressure Washing — ${packageName}`,
             description: `Deposit for ${packageName}. Date: ${date || 'TBD'} at ${time || 'TBD'}.`,
           },
-          unit_amount: Math.round(price * 100),
+          unit_amount: Math.round(deposit * 100),
         },
         quantity: 1,
       }],
