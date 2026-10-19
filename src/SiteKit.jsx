@@ -652,11 +652,11 @@ export function Footer({ sub, about, phone, phoneDisplay, current }) {
 /*
   Membership signup (Stripe subscription checkout via /api/create-subscription).
   kind "club": Detail Club. Pays the starter Full Detail today; monthly billing starts in 30 days.
-  kind "home": Home Exterior Plan. $69/mo (+$30/mo with roof), billed from today.
+  kind "home": Home Exterior Plans (Curb Appeal / Full Exterior / Estate), billed monthly from today, cancel anytime.
 */
 const STARTER_PRICES = { "Sedan / Coupe": 349, "SUV / Crossover": 369, "Truck / Large SUV": 389 };
 
-export function MemberSignup({ kind, plan, setPlan, plans, roof, setRoof, phoneDisplay, onQuote, siteName }) {
+export function MemberSignup({ kind, plan, setPlan, plans, phoneDisplay, onQuote, siteName }) {
   const [name, setName] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [email, setEmail] = useState("");
@@ -689,15 +689,15 @@ export function MemberSignup({ kind, plan, setPlan, plans, roof, setRoof, phoneD
 
   const club = kind === "club";
   const chosen = plans.find(p => p.id === plan);
-  const dueToday = club ? (STARTER_PRICES[vehicleSize] || 349) : 69 + (roof ? 30 : 0);
-  const monthly = club ? chosen.monthly : 69 + (roof ? 30 : 0);
+  const dueToday = club ? (STARTER_PRICES[vehicleSize] || 349) : chosen.monthly;
+  const monthly = chosen.monthly;
   const missing = !name || !phoneNum || !email || !address || (club ? (!vehicleSize || !vehicle) : !sizeOk);
 
   const submit = async () => {
     if (missing) { setError(club ? "Fill in every field and pick your vehicle size." : "Fill in every field and confirm your home size."); return; }
     setError(""); setStatus("sending");
-    const payload = { plan, roof: !!roof, vehicleSize, vehicle, customerName: name, customerEmail: email, customerPhone: phoneNum, address };
-    localStorage.setItem("pendingMember", JSON.stringify({ name, phone: phoneNum, email, address, membership: club ? chosen.label : (roof ? "Home Exterior Plan + roof" : "Home Exterior Plan"), vehicle: club ? `${vehicle} - ${vehicleSize}` : "", dueToday, monthly: "$" + monthly + "/mo" }));
+    const payload = { plan, vehicleSize, vehicle, customerName: name, customerEmail: email, customerPhone: phoneNum, address };
+    localStorage.setItem("pendingMember", JSON.stringify({ name, phone: phoneNum, email, address, membership: chosen.label, vehicle: club ? `${vehicle} - ${vehicleSize}` : "", dueToday, monthly: "$" + monthly + "/mo" }));
     try {
       const res = await fetch("/api/create-subscription", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const data = await res.json();
@@ -727,16 +727,16 @@ export function MemberSignup({ kind, plan, setPlan, plans, roof, setRoof, phoneD
     <div id="signup" className="panel signup">
       <div className="form">
         <h3 className="signup-title">{club ? "Join the Detail Club" : "Start your Home Exterior Plan"}</h3>
+        <span className="label">Plan</span>
+        <div className={"seg" + (plans.length === 2 ? " seg-2" : "")}>
+          {plans.map(p => (
+            <button key={p.id} className={"seg-btn" + (plan === p.id ? " is-on" : "")} onClick={() => setPlan(p.id)}>
+              {p.name}<span className="seg-sub">${p.monthly}/mo</span>
+            </button>
+          ))}
+        </div>
         {club ? (
           <>
-            <span className="label">Plan</span>
-            <div className="seg seg-2">
-              {plans.map(p => (
-                <button key={p.id} className={"seg-btn" + (plan === p.id ? " is-on" : "")} onClick={() => setPlan(p.id)}>
-                  {p.name}<span className="seg-sub">${p.monthly}/mo</span>
-                </button>
-              ))}
-            </div>
             <span className="label">Vehicle size (sets the price of your first Full Detail)</span>
             <div className="seg">
               {Object.keys(STARTER_PRICES).map(s => (
@@ -749,7 +749,6 @@ export function MemberSignup({ kind, plan, setPlan, plans, roof, setRoof, phoneD
           </>
         ) : (
           <>
-            <label className="check"><input type="checkbox" checked={!!roof} onChange={e => setRoof(e.target.checked)} /> <span>Add the yearly roof soft wash (+$30/mo)</span></label>
             <label className="check"><input type="checkbox" checked={sizeOk} onChange={e => setSizeOk(e.target.checked)} /> <span>My home is about 2,000 sq ft or smaller. <button type="button" className="link" onClick={onQuote}>Bigger home? Get a quote</button></span></label>
           </>
         )}
@@ -764,7 +763,7 @@ export function MemberSignup({ kind, plan, setPlan, plans, roof, setRoof, phoneD
         <div className="deposit">
           <div>
             <strong>Due today: ${dueToday}</strong>
-            <span>{club ? `Your first Full Detail. Then $${monthly}/mo starting in 30 days. 6-month minimum.` : `Then $${monthly}/mo. 12-month plan; cancelling early, the rest of the 12 months is due.`}</span>
+            <span>{club ? `Your first Full Detail. Then $${monthly}/mo starting in 30 days. 6-month minimum.` : `Then $${monthly}/mo. Cancel anytime. If you cancel after getting more service than you've paid for, we bill the difference at member prices.`}</span>
           </div>
           <span className="deposit-amt">${dueToday}</span>
         </div>
@@ -1090,4 +1089,8 @@ button.tile { border: 0; padding: 0; width: 100%; text-align: left; cursor: poin
 .check input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--pink); flex: none; }
 .link { background: none; border: 0; padding: 0; color: var(--pink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font: inherit; }
 @media (max-width: 760px) { .seg.seg-2 { grid-template-columns: 1fr; } }
+.member-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.plan .plan-worth { color: var(--ok); font-size: 13px; }
+.perks li h3 { color: var(--paper); }
+@media (max-width: 960px) { .member-grid-3 { grid-template-columns: 1fr; } }
 `;

@@ -1,20 +1,44 @@
 import Stripe from 'stripe';
 
-// Home Exterior Plan. Prices are set here on the server so the browser can't change them.
-// Recurring prices are created once in Stripe (found again by lookup key), so they show up as
-// real products in the Stripe dashboard.
-const HOME_PLAN = {
-  lookup: 'mcs_home_exterior_plan_69',
-  name: 'Magic City Home Exterior Plan (homes up to 2,000 sq ft)',
-  amount: 6900,
-  label: 'Home Exterior Plan, $69/mo',
+// Home Exterior Plans (about 15% off regular prices, cancel anytime).
+// Prices are set here on the server so the browser can't change them. Recurring prices are
+// created once in Stripe (found again by lookup key), so they show up as real products in the
+// Stripe dashboard.
+const PLANS = {
+  curb_appeal: {
+    lookup: 'mcs_home_curb_appeal_95',
+    name: 'Magic City Home Plan: Curb Appeal',
+    amount: 9500,
+    label: 'Curb Appeal, $95/mo',
+    includes: 'Driveway and walkways 4x a year, house wash 1x a year',
+  },
+  full_exterior: {
+    lookup: 'mcs_home_full_exterior_139',
+    name: 'Magic City Home Plan: Full Exterior',
+    amount: 13900,
+    label: 'Full Exterior, $139/mo',
+    includes: 'Driveway and walkways 4x, house wash 1x, pool deck 2x, gutters 2x a year',
+  },
+  estate: {
+    lookup: 'mcs_home_estate_189',
+    name: 'Magic City Home Plan: Estate',
+    amount: 18900,
+    label: 'Estate, $189/mo',
+    includes: 'Full Exterior plus a yearly roof soft wash and windows 1x a year',
+  },
 };
-const ROOF_ADDON = {
-  lookup: 'mcs_home_plan_roof_addon_30',
-  name: 'Home Exterior Plan roof add-on (yearly roof soft wash)',
-  amount: 3000,
-  label: 'Roof add-on, $30/mo',
-};
+
+// Retired Oct 19, 2026 (old $69 plan and $30 roof add-on). Switched off so nobody can buy them.
+const RETIRED = ['mcs_home_exterior_plan_69', 'mcs_home_plan_roof_addon_30'];
+
+async function retireOldPrices(stripe) {
+  try {
+    const old = await stripe.prices.list({ lookup_keys: RETIRED, active: true, limit: 10 });
+    await Promise.all(old.data.map(p => stripe.prices.update(p.id, { active: false })));
+  } catch (err) {
+    console.error('Could not retire old prices:', err.message);
+  }
+}
 
 async function recurringPrice(stripe, plan) {
   const found = await stripe.prices.list({ lookup_keys: [plan.lookup], active: true, limit: 1 });
@@ -48,14 +72,17 @@ export default async function handler(req, res) {
   const origin = req.headers.origin || 'https://magiccitypressurewashingmiami.com';
 
   try {
-    const { roof, customerName, customerEmail, customerPhone, address } = req.body || {};
+    const { plan: planId, customerName, customerEmail, customerPhone, address } = req.body || {};
+    const plan = PLANS[planId];
+    if (!plan) return res.status(400).json({ error: 'Unknown plan' });
     if (!customerEmail || !customerName || !customerPhone || !address) return res.status(400).json({ error: 'Missing contact details' });
 
-    const lineItems = [{ price: await recurringPrice(stripe, HOME_PLAN), quantity: 1 }];
-    if (roof) lineItems.push({ price: await recurringPrice(stripe, ROOF_ADDON), quantity: 1 });
+    await retireOldPrices(stripe);
+    const priceId = await recurringPrice(stripe, plan);
 
     const meta = {
-      plan: roof ? 'home_plan_with_roof' : 'home_plan',
+      plan: planId,
+      includes: plan.includes,
       customerName: String(customerName).slice(0, 200),
       customerPhone: String(customerPhone).slice(0, 50),
       serviceAddress: String(address).slice(0, 400),
@@ -64,15 +91,15 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       customer_email: customerEmail,
-      line_items: lineItems,
+      line_items: [{ price: priceId, quantity: 1 }],
       subscription_data: {
-        description: `${roof ? 'Home Exterior Plan with roof add-on' : 'Home Exterior Plan'}. 12-month plan.`,
+        description: `${plan.label}. ${plan.includes}. Cancel anytime.`,
         metadata: meta,
       },
       metadata: meta,
       custom_text: {
         submit: {
-          message: 'Billed monthly as a 12-month plan; if you cancel early, the rest of the 12 months is due. Includes driveway and walkways every 3 months, pool deck twice a year, a house wash once a year, and 15% off other services. For homes up to about 2,000 sq ft.',
+          message: `${plan.includes}. For homes up to about 2,000 sq ft. Cancel anytime. If you cancel after receiving more service than you've paid for, the difference is billed at member prices.`,
         },
       },
       success_url: `${origin}/?member=success`,

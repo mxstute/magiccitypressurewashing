@@ -191,11 +191,22 @@ const TILES = [
   { name: "Pool decks & patios", from: "From $200", pkg: 3, img: "/images/v4/pool-deck", cta: "Book a pool deck", blurb: "Travertine, pavers and concrete cleaned of algae and slippery buildup." },
 ];
 
-const PLAN_ITEMS = [
-  "Driveway and walkways washed every 3 months",
-  "Pool deck or patio washed twice a year",
-  "Full house wash once a year",
-  "15% off any other service, plus priority scheduling",
+const HOME_PLANS = [
+  { id: "curb_appeal", name: "Curb Appeal", label: "Home Plan: Curb Appeal", monthly: 95, worth: 1350,
+    items: ["Driveway and walkways washed every 3 months", "Full house wash once a year"] },
+  { id: "full_exterior", name: "Full Exterior", label: "Home Plan: Full Exterior", monthly: 139, worth: 1940, featured: true,
+    items: ["Everything in Curb Appeal", "Pool deck or patio washed twice a year", "Gutters cleaned twice a year"] },
+  { id: "estate", name: "Estate", label: "Home Plan: Estate", monthly: 189, worth: 2690,
+    items: ["Everything in Full Exterior", "Roof soft wash once a year", "Windows washed once a year"] },
+];
+
+const MEMBER_PERKS = [
+  ["Price lock", "Your monthly rate stays the same for as long as you're a member."],
+  ["First call after storms", "Priority scheduling for post-storm cleanups during hurricane season."],
+  ["Free touch-ups", "If something isn't right, we come back within 7 days at no charge."],
+  ["15% off everything else", "Member pricing on extra washes, junk removal and mobile detailing."],
+  ["$100 off holiday lights", "Off any Magic City holiday lighting install."],
+  ["Priority booking", "Members book first and get the same crew whenever possible."],
 ];
 
 export default function PressureWashingSite() {
@@ -203,7 +214,8 @@ export default function PressureWashingSite() {
   const [tab, setTab] = useState("book");
   const [openKey, setOpenKey] = useState(null);
   const [quoteValue, setQuoteValue] = useState(null);
-  const [roof, setRoof] = useState(false);
+  const [homePlan, setHomePlan] = useState("full_exterior");
+  const joinPlan = (id) => { setHomePlan(id); goTo("signup"); };
 
   const pick = (t) => { setSelectedPkg(t.pkg); setTab("book"); goTo("booking"); };
   const askPlan = () => { setQuoteValue("Home Exterior Plan"); setTab("quote"); goTo("booking"); };
@@ -214,7 +226,7 @@ export default function PressureWashingSite() {
     <Page>
       <Promo />
       <Nav sub="Pressure Washing" phone={PHONE} phoneDisplay={PHONE_DISPLAY}
-        links={[{ id: "services", label: "Services" }, { id: "pricing", label: "Pricing" }, { id: "plan", label: "Home plan" }, { id: "areas", label: "Areas" }]} />
+        links={[{ id: "services", label: "Services" }, { id: "pricing", label: "Pricing" }, { id: "plan", label: "Home plans" }, { id: "areas", label: "Areas" }]} />
 
       <Hero
         img="/images/v4/hero-house-softwash.webp"
@@ -252,34 +264,29 @@ export default function PressureWashingSite() {
       <section id="plan" className="section member">
         <div className="wrap">
           <div className="section-head">
-            <h2 className="h2">Home Exterior Plan</h2>
-            <p className="lede">Keep the house looking freshly washed all year for a set monthly price, instead of booking one wash at a time.</p>
+            <h2 className="h2">Home Exterior Plans</h2>
+            <p className="lede">Your home kept washed all year on a set schedule, for about 15% less than booking each visit. Cancel anytime.</p>
           </div>
-          <div className="member-grid">
-            <div className="plan is-featured">
-              <h3>Home plan</h3>
-              <p className="plan-price">$69<small>/month</small></p>
-              <ul className="checks">{PLAN_ITEMS.map(i => <li key={i}>{i}</li>)}</ul>
-              <p>12-month plan for homes up to about 2,000 sq ft. Bigger home? <button type="button" className="link" onClick={askPlan}>Get a quote</button></p>
-              <button className="btn btn-pink" onClick={() => goTo("signup")}>
-                <span className="btn-label">Start my plan</span>
-                <span className="btn-icon"><ArrowIcon /></span>
-              </button>
-            </div>
-            <div className={"plan" + (roof ? " is-featured" : "")}>
-              <h3>Add the roof</h3>
-              <p className="plan-price">+$30<small>/month</small></p>
-              <ul className="checks">
-                <li>Yearly roof soft wash for shingle or tile</li>
-                <li>Keeps black algae streaks from coming back</li>
-              </ul>
-              <button className={"btn " + (roof ? "btn-pink" : "btn-outline")} onClick={() => { setRoof(!roof); goTo("signup"); }}>
-                <span className="btn-label">{roof ? "Roof added" : "Add the roof"}</span>
-                <span className="btn-icon"><ArrowIcon /></span>
-              </button>
-            </div>
+          <div className="member-grid member-grid-3">
+            {HOME_PLANS.map(p => (
+              <div key={p.id} className={"plan" + (p.featured ? " is-featured" : "")}>
+                <h3>{p.name}</h3>
+                <p className="plan-price">${p.monthly}<small>/month</small></p>
+                <p className="plan-worth">Worth ${p.worth.toLocaleString()} a year at regular prices. You pay ${(p.monthly * 12).toLocaleString()}.</p>
+                <ul className="checks">{p.items.map(i => <li key={i}>{i}</li>)}</ul>
+                <button className={"btn " + (p.featured ? "btn-pink" : "btn-outline")} onClick={() => joinPlan(p.id)}>
+                  <span className="btn-label">Choose {p.name}</span>
+                  <span className="btn-icon"><ArrowIcon /></span>
+                </button>
+              </div>
+            ))}
           </div>
-          <MemberSignup kind="home" plans={[]} plan="home_plan" setPlan={() => {}} roof={roof} setRoof={setRoof} phoneDisplay={PHONE_DISPLAY} onQuote={askPlan} siteName="magiccitypressurewashingmiami.com" />
+          <h3 className="subhead">Every plan includes</h3>
+          <ul className="info-grid perks">
+            {MEMBER_PERKS.map(([t, d]) => <li key={t}><h3>{t}</h3><p>{d}</p></li>)}
+          </ul>
+          <p className="member-fine">For homes up to about 2,000 sq ft. Bigger home or a business? <button type="button" className="link" onClick={askPlan}>Get a quote</button>. Cancel anytime; if you cancel after getting more service than you've paid for, we bill the difference at member prices.</p>
+          <MemberSignup kind="home" plans={HOME_PLANS} plan={homePlan} setPlan={setHomePlan} phoneDisplay={PHONE_DISPLAY} onQuote={askPlan} siteName="magiccitypressurewashingmiami.com" />
         </div>
       </section>
 
