@@ -763,7 +763,7 @@ export function MemberSignup({ kind, plan, setPlan, plans, phoneDisplay, onQuote
         <div className="deposit">
           <div>
             <strong>Due today: ${dueToday}</strong>
-            <span>{club ? `Your first Full Detail. Then $${monthly}/mo starting in 30 days. 6-month minimum.` : `Then $${monthly}/mo. Cancel anytime. If you cancel after getting more service than you've paid for, we bill the difference at member prices.`}</span>
+            <span>{club ? `Your first Full Detail. Then $${monthly}/mo starting in 30 days. Cancel anytime.` : `Then $${monthly}/mo. Cancel anytime. If you cancel after getting more service than you've paid for, we bill the difference at member prices.`}</span>
           </div>
           <span className="deposit-amt">${dueToday}</span>
         </div>
