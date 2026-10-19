@@ -649,6 +649,136 @@ export function Footer({ sub, about, phone, phoneDisplay, current }) {
   );
 }
 
+/*
+  Membership signup (Stripe subscription checkout via /api/create-subscription).
+  kind "club": Detail Club. Pays the starter Full Detail today; monthly billing starts in 30 days.
+  kind "home": Home Exterior Plan. $69/mo (+$30/mo with roof), billed from today.
+*/
+const STARTER_PRICES = { "Sedan / Coupe": 349, "SUV / Crossover": 369, "Truck / Large SUV": 389 };
+
+export function MemberSignup({ kind, plan, setPlan, plans, roof, setRoof, phoneDisplay, onQuote, siteName }) {
+  const [name, setName] = useState("");
+  const [phoneNum, setPhoneNum] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [vehicleSize, setVehicleSize] = useState("");
+  const [vehicle, setVehicle] = useState("");
+  const [sizeOk, setSizeOk] = useState(false);
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("member") === "success") {
+      const saved = localStorage.getItem("pendingMember");
+      if (saved) {
+        const data = JSON.parse(saved);
+        fetch("https://formspree.io/f/xqeyrgno", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...data, payment: "Stripe membership checkout completed", _subject: `New membership signup (${siteName})` }),
+        }).catch(() => {});
+        localStorage.removeItem("pendingMember");
+        if (typeof gtag === "function") gtag("event", "conversion", { send_to: "AW-18078412608/S_40CIGMrZkcEMDeuqxD", value: Number(data.dueToday) || 0, currency: "USD" });
+      }
+      setStatus("joined");
+      window.history.replaceState({}, "", window.location.pathname);
+      setTimeout(() => document.getElementById("signup")?.scrollIntoView(), 50);
+    }
+  }, []);
+
+  const club = kind === "club";
+  const chosen = plans.find(p => p.id === plan);
+  const dueToday = club ? (STARTER_PRICES[vehicleSize] || 349) : 69 + (roof ? 30 : 0);
+  const monthly = club ? chosen.monthly : 69 + (roof ? 30 : 0);
+  const missing = !name || !phoneNum || !email || !address || (club ? (!vehicleSize || !vehicle) : !sizeOk);
+
+  const submit = async () => {
+    if (missing) { setError(club ? "Fill in every field and pick your vehicle size." : "Fill in every field and confirm your home size."); return; }
+    setError(""); setStatus("sending");
+    const payload = { plan, roof: !!roof, vehicleSize, vehicle, customerName: name, customerEmail: email, customerPhone: phoneNum, address };
+    localStorage.setItem("pendingMember", JSON.stringify({ name, phone: phoneNum, email, address, membership: club ? chosen.label : (roof ? "Home Exterior Plan + roof" : "Home Exterior Plan"), vehicle: club ? `${vehicle} - ${vehicleSize}` : "", dueToday, monthly: "$" + monthly + "/mo" }));
+    try {
+      const res = await fetch("/api/create-subscription", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else throw new Error(data.error || "No checkout link");
+    } catch (e) {
+      console.error("Membership checkout error:", e);
+      setStatus("idle");
+      setError(`We couldn't open checkout. Try again, or call ${phoneDisplay} and we'll sign you up.`);
+    }
+  };
+
+  if (status === "joined") {
+    return (
+      <div id="signup" className="panel signup">
+        <div className="form">
+          <div className="success" role="status">
+            <strong>Welcome to the {club ? "Detail Club" : "Home Exterior Plan"}</strong>
+            <span>Check your email for the receipt. We'll text you within 30 minutes to schedule your first visit.</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div id="signup" className="panel signup">
+      <div className="form">
+        <h3 className="signup-title">{club ? "Join the Detail Club" : "Start your Home Exterior Plan"}</h3>
+        {club ? (
+          <>
+            <span className="label">Plan</span>
+            <div className="seg seg-2">
+              {plans.map(p => (
+                <button key={p.id} className={"seg-btn" + (plan === p.id ? " is-on" : "")} onClick={() => setPlan(p.id)}>
+                  {p.name}<span className="seg-sub">${p.monthly}/mo</span>
+                </button>
+              ))}
+            </div>
+            <span className="label">Vehicle size (sets the price of your first Full Detail)</span>
+            <div className="seg">
+              {Object.keys(STARTER_PRICES).map(s => (
+                <button key={s} className={"seg-btn" + (vehicleSize === s ? " is-on" : "")} onClick={() => setVehicleSize(s)}>
+                  {s}<span className="seg-sub">${STARTER_PRICES[s]}</span>
+                </button>
+              ))}
+            </div>
+            <label className="field"><span>Year, make and model</span><input type="text" value={vehicle} onChange={e => setVehicle(e.target.value)} placeholder="2022 Tesla Model Y" /></label>
+          </>
+        ) : (
+          <>
+            <label className="check"><input type="checkbox" checked={!!roof} onChange={e => setRoof(e.target.checked)} /> <span>Add the yearly roof soft wash (+$30/mo)</span></label>
+            <label className="check"><input type="checkbox" checked={sizeOk} onChange={e => setSizeOk(e.target.checked)} /> <span>My home is about 2,000 sq ft or smaller. <button type="button" className="link" onClick={onQuote}>Bigger home? Get a quote</button></span></label>
+          </>
+        )}
+        <label className="field"><span>Full name</span><input type="text" value={name} onChange={e => setName(e.target.value)} autoComplete="name" /></label>
+        <div className="row">
+          <label className="field"><span>Phone</span><input type="tel" value={phoneNum} onChange={e => setPhoneNum(e.target.value)} placeholder="(305) 000-0000" autoComplete="tel" /></label>
+          <label className="field"><span>Email</span><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" autoComplete="email" /></label>
+        </div>
+        <div className="field"><span>Service address</span>
+          <AddressAutocomplete value={address} onChange={setAddress} placeholder="Street, city, ZIP" inputStyle={ADDRESS_INPUT} />
+        </div>
+        <div className="deposit">
+          <div>
+            <strong>Due today: ${dueToday}</strong>
+            <span>{club ? `Your first Full Detail. Then $${monthly}/mo starting in 30 days. 6-month minimum.` : `Then $${monthly}/mo. 12-month plan; cancelling early, the rest of the 12 months is due.`}</span>
+          </div>
+          <span className="deposit-amt">${dueToday}</span>
+        </div>
+        {error && <p className="note-err">{error}</p>}
+        <button className="btn btn-pink btn-block" onClick={submit} disabled={status === "sending"}>
+          <span className="btn-label">{status === "sending" ? "Opening secure checkout…" : `Pay $${dueToday} and join`}</span>
+          <span className="btn-icon"><ArrowIcon /></span>
+        </button>
+        <p className="fine">Secure checkout by Stripe. Questions first? Call {phoneDisplay}.</p>
+      </div>
+    </div>
+  );
+}
+
 const CSS = `
 :root {
   --ink: #090E1A;
@@ -953,4 +1083,11 @@ button.tile { border: 0; padding: 0; width: 100%; text-align: left; cursor: poin
 @media (max-width: 380px) {
   .nav .btn-icon { display: none; }
 }
+.signup { max-width: 720px; margin: 24px 0 0; }
+.signup-title { margin: 0; font-stretch: 125%; font-weight: 400; text-transform: uppercase; letter-spacing: .05em; font-size: 18px; }
+.seg.seg-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--paper); line-height: 1.5; cursor: pointer; }
+.check input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--pink); flex: none; }
+.link { background: none; border: 0; padding: 0; color: var(--pink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font: inherit; }
+@media (max-width: 760px) { .seg.seg-2 { grid-template-columns: 1fr; } }
 `;

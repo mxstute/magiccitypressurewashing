@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Page, Promo, Nav, Hero, Tiles, How, Booking, Pricing, PriceList, Areas, Band, Footer, goTo, ArrowIcon } from "./SiteKit";
+import { Page, Promo, Nav, Hero, Tiles, How, Booking, Pricing, PriceList, Areas, Band, Footer, MemberSignup, goTo, ArrowIcon } from "./SiteKit";
 
 /*
   MAGIC CITY PRESSURE WASHING — v4 (Oct 2026 redesign)
@@ -203,6 +203,7 @@ export default function PressureWashingSite() {
   const [tab, setTab] = useState("book");
   const [openKey, setOpenKey] = useState(null);
   const [quoteValue, setQuoteValue] = useState(null);
+  const [roof, setRoof] = useState(false);
 
   const pick = (t) => { setSelectedPkg(t.pkg); setTab("book"); goTo("booking"); };
   const askPlan = () => { setQuoteValue("Home Exterior Plan"); setTab("quote"); goTo("booking"); };
@@ -257,24 +258,28 @@ export default function PressureWashingSite() {
           <div className="member-grid">
             <div className="plan is-featured">
               <h3>Home plan</h3>
-              <p className="plan-price">$69<small>/month and up</small></p>
+              <p className="plan-price">$69<small>/month</small></p>
               <ul className="checks">{PLAN_ITEMS.map(i => <li key={i}>{i}</li>)}</ul>
-              <p>12-month plan. Monthly price depends on the size of your home.</p>
-              <button className="btn btn-pink" onClick={askPlan}>
-                <span className="btn-label">Ask about the plan</span>
+              <p>12-month plan for homes up to about 2,000 sq ft. Bigger home? <button type="button" className="link" onClick={askPlan}>Get a quote</button></p>
+              <button className="btn btn-pink" onClick={() => goTo("signup")}>
+                <span className="btn-label">Start my plan</span>
                 <span className="btn-icon"><ArrowIcon /></span>
               </button>
             </div>
-            <div className="plan">
+            <div className={"plan" + (roof ? " is-featured" : "")}>
               <h3>Add the roof</h3>
               <p className="plan-price">+$30<small>/month</small></p>
               <ul className="checks">
                 <li>Yearly roof soft wash for shingle or tile</li>
                 <li>Keeps black algae streaks from coming back</li>
               </ul>
-              <p>Add it to the home plan at any time.</p>
+              <button className={"btn " + (roof ? "btn-pink" : "btn-outline")} onClick={() => { setRoof(!roof); goTo("signup"); }}>
+                <span className="btn-label">{roof ? "Roof added" : "Add the roof"}</span>
+                <span className="btn-icon"><ArrowIcon /></span>
+              </button>
             </div>
           </div>
+          <MemberSignup kind="home" plans={[]} plan="home_plan" setPlan={() => {}} roof={roof} setRoof={setRoof} phoneDisplay={PHONE_DISPLAY} onQuote={askPlan} siteName="magiccitypressurewashingmiami.com" />
         </div>
       </section>
 
