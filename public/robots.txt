@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://magiccitypressurewashingmiami.com/sitemap.xml
+
+Sitemap: https://www.magiccitypressurewashingmiami.com/sitemap.xml

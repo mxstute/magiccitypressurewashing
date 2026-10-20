@@ -302,9 +302,9 @@ export default function PressureWashingSite() {
         </div>
       </section>
 
-      <Areas />
+      <Areas prefix="pressure-washing" />
       <Band phone={PHONE} phoneDisplay={PHONE_DISPLAY} onQuote={() => { setTab("quote"); goTo("booking"); }} />
-      <Footer sub="Pressure Washing" current="Pressure Washing" phone={PHONE} phoneDisplay={PHONE_DISPLAY}
+      <Footer services={[["driveway-pressure-washing", "Driveway cleaning"], ["house-washing", "House washing"], ["roof-cleaning", "Roof cleaning"], ["pool-deck-cleaning", "Pool deck cleaning"], ["commercial-pressure-washing", "Commercial and HOA"]]} sub="Pressure Washing" current="Pressure Washing" phone={PHONE} phoneDisplay={PHONE_DISPLAY}
         about="Magic City Pressure Washing cleans driveways, homes, roofs and pool decks across South Florida with vetted, insured local crews. Part of Magic City Services." />
     </Page>
   );

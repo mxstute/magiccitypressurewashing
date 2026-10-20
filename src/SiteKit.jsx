@@ -11,16 +11,16 @@ import AddressAutocomplete from "./AddressAutocomplete";
 export function trackPhoneClick() { if (typeof gtag === "function") gtag("event", "conversion", { send_to: "AW-18078412608/XZo5CJzT3OccEMDeuqxD" }); }
 
 export const AREAS = [
-  "Miami Beach", "Brickell", "Coral Gables", "Kendall", "Doral", "Hialeah",
+  "Miami", "Miami Beach", "Brickell", "Coral Gables", "Kendall", "Doral", "Hialeah",
   "Coconut Grove", "Aventura", "Hollywood", "Fort Lauderdale", "Pembroke Pines",
-  "Weston", "Boca Raton", "West Palm Beach", "Homestead", "Miami Gardens",
+  "Weston", "Boca Raton", "West Palm Beach", "Homestead", "Miami Gardens", "Pinecrest",
 ];
 
 export const SITES = [
-  { name: "Junk Removal", href: "https://magiccityjunkremovalmiami.com" },
-  { name: "Pressure Washing", href: "https://magiccitypressurewashingmiami.com" },
-  { name: "Mobile Detailing", href: "https://magiccitydetailingmiami.com" },
-  { name: "Holiday Lighting", href: "https://magiccityservicesmiami.com/holiday-lighting" },
+  { name: "Junk Removal", href: "https://www.magiccityjunkremovalmiami.com/" },
+  { name: "Pressure Washing", href: "https://www.magiccitypressurewashingmiami.com/" },
+  { name: "Mobile Detailing", href: "https://www.magiccitydetailingmiami.com/" },
+  { name: "Holiday Lighting", href: "https://www.magiccityservicesmiami.com/holiday-lighting" },
 ];
 
 const TIMES = [];
@@ -109,7 +109,7 @@ export function Page({ children }) {
 
 export function Promo() {
   return (
-    <a className="promo" href="https://magiccityservicesmiami.com/holiday-lighting">
+    <a className="promo" href="https://www.magiccityservicesmiami.com/holiday-lighting">
       Holiday light installs are booking now. Lights, install and takedown included, from $499. <span className="promo-link">Get a free estimate</span>
     </a>
   );
@@ -575,7 +575,9 @@ export function Pricing({ heading, lede, img, imgAlt, children }) {
   );
 }
 
-export function Areas({ alt }) {
+const slugify = (a) => a.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+export function Areas({ alt, prefix }) {
   return (
     <section id="areas" className={"section areas" + (alt ? " alt" : "")}>
       <div className="wrap">
@@ -583,7 +585,7 @@ export function Areas({ alt }) {
           <h2 className="h2">Where we work</h2>
           <p className="lede">All of Miami-Dade and Broward, plus south Palm Beach County. Don't see your city? Call and ask.</p>
         </div>
-        <ul className="area-list">{AREAS.map((a) => <li key={a}>{a}</li>)}</ul>
+        <ul className="area-list">{AREAS.map((a) => <li key={a}>{prefix ? <a href={`/${prefix}-${slugify(a)}`}>{a}</a> : a}</li>)}</ul>
       </div>
     </section>
   );
@@ -610,7 +612,7 @@ export function Band({ heading = "Get a price today", phone, phoneDisplay, onQuo
   );
 }
 
-export function Footer({ sub, about, phone, phoneDisplay, current }) {
+export function Footer({ sub, about, phone, phoneDisplay, current, services = [] }) {
   return (
     <footer id="footer" className="footer">
       <div className="wrap foot-grid">
@@ -618,11 +620,17 @@ export function Footer({ sub, about, phone, phoneDisplay, current }) {
           <Logo sub={sub} />
           <p>{about}</p>
         </div>
+        {services.length > 0 && (
+          <div>
+            <h3>Services</h3>
+            <ul>{services.map(([href, label]) => <li key={href}><a href={`/${href}`}>{label}</a></li>)}</ul>
+          </div>
+        )}
         <div>
           <h3>Magic City Services</h3>
           <ul>
             {SITES.filter(s => s.name !== current).map(s => <li key={s.name}><a href={s.href}>{s.name}</a></li>)}
-            <li><a href="https://magiccityservicesmiami.com">All services</a></li>
+            <li><a href="https://www.magiccityservicesmiami.com/">All services</a></li>
           </ul>
         </div>
         <div>
@@ -643,7 +651,7 @@ export function Footer({ sub, about, phone, phoneDisplay, current }) {
       </div>
       <div className="wrap foot-legal">
         <span>© 2026 Magic City Services Miami LLC</span>
-        <span><a href="https://magiccityservicesmiami.com/privacy">Privacy</a> <a href="https://magiccityservicesmiami.com/terms">Terms</a></span>
+        <span><a href="https://www.magiccityservicesmiami.com/privacy">Privacy</a> <a href="https://www.magiccityservicesmiami.com/terms">Terms</a></span>
       </div>
     </footer>
   );
@@ -965,6 +973,8 @@ section[id] { scroll-margin-top: 72px; }
 /* Areas */
 .area-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
 .area-list li { padding: 16px 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 15px; }
+.area-list a { color: inherit; text-decoration: none; }
+.area-list a:hover { color: var(--pink); }
 
 /* CTA band with angled pink block */
 .band { position: relative; background: var(--ink); overflow: hidden; padding: 72px 0; }
@@ -975,7 +985,8 @@ section[id] { scroll-margin-top: 72px; }
 
 /* Footer */
 .footer { background: #060A13; padding: 64px 0 28px; font-size: 14px; }
-.foot-grid { display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); gap: 40px; }
+.foot-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(4, minmax(0, 1fr)); gap: 32px; }
+.foot-grid li { overflow-wrap: anywhere; }
 .foot-about p { color: var(--mist); max-width: 42ch; margin: 18px 0 0; }
 .footer h3 { font-size: 14px; font-weight: 600; margin: 0 0 12px; }
 .footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; color: var(--mist); }
