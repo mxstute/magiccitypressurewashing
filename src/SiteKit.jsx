@@ -48,6 +48,18 @@ export const STEPS = [
 
 export const goTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
+export const SMS_CONSENT_TEXT = "By checking this box, I agree to receive transactional and informational text messages from Magic City Services Miami LLC about my quote, booking, and service. Message frequency varies. Msg & data rates may apply. Reply HELP for help or STOP to opt out. Consent is not a condition of purchase.";
+
+// SMS opt-in for A2P 10DLC compliance. Optional and unchecked by default; consent is never required to book.
+export function SmsConsent({ checked, onChange, name }) {
+  return (
+    <label className="consent">
+      <input type="checkbox" name={name} value="Yes" checked={checked} onChange={onChange} />
+      <span>{SMS_CONSENT_TEXT} View our <a href="https://www.magiccityservicesmiami.com/privacy" target="_blank" rel="noopener">SMS Privacy Policy</a> | <a href="https://www.magiccityservicesmiami.com/terms" target="_blank" rel="noopener">Terms</a>.</span>
+    </label>
+  );
+}
+
 export function ArrowIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
@@ -249,6 +261,7 @@ export function Booking({
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [quoteStatus, setQuoteStatus] = useState("idle");
+  const [smsConsent, setSmsConsent] = useState(false);
 
   const selectedPackage = selectedPkg !== null ? packages[selectedPkg] : null;
   const depositAmount = selectedPackage ? selectedPackage.deposit : 0;
@@ -290,6 +303,9 @@ export function Booking({
         package: selectedPackage.name,
         price: selectedPackage.price,
         deposit: depositAmount,
+        sms_consent: smsConsent ? "Yes" : "No",
+        sms_consent_text: smsConsent ? SMS_CONSENT_TEXT : "",
+        sms_consent_at: new Date().toISOString(),
         ...(needsVehicle ? { vehicleYear, vehicleMake, vehicleModel, vehicleSize, vehicleColor, vehicle } : {}),
       };
       localStorage.setItem("pendingBooking", JSON.stringify(bookingData));
@@ -323,7 +339,12 @@ export function Booking({
     const form = e.target;
     setQuoteStatus("sending");
     try {
-      const res = await fetch("https://formspree.io/f/xyknrbor", { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } });
+      const fd = new FormData(form);
+      const consented = !!form.elements.sms_consent?.checked;
+      fd.set("sms_consent", consented ? "Yes" : "No");
+      fd.set("sms_consent_text", consented ? SMS_CONSENT_TEXT : "");
+      fd.set("sms_consent_at", new Date().toISOString());
+      const res = await fetch("https://formspree.io/f/xyknrbor", { method: "POST", body: fd, headers: { Accept: "application/json" } });
       if (!res.ok) throw new Error("Formspree " + res.status);
       if (typeof gtag === "function") gtag("event", "conversion", { send_to: "AW-18078412608/MT3wCJnT3OccEMDeuqxD" });
       if (typeof fbq === "function") fbq("track", "Lead");
@@ -435,6 +456,8 @@ export function Booking({
                 <AddressAutocomplete value={address} onChange={setAddress} placeholder="Street, city, ZIP" inputStyle={ADDRESS_INPUT} />
               </div>
 
+              <SmsConsent checked={smsConsent} onChange={e => setSmsConsent(e.target.checked)} name="sms_consent" />
+
               {selectedPackage && !submitted && (
                 <div className="deposit">
                   <div>
@@ -488,6 +511,7 @@ export function Booking({
                 <label className="field"><span>{quotePrompt}</span>
                   <textarea name="message" rows={4} placeholder={quotePlaceholder} />
                 </label>
+                <SmsConsent name="sms_consent" />
                 {quoteStatus === "error" && <p className="note-err">That didn't send. Check your connection and try again, or call {phoneDisplay}.</p>}
                 <button type="submit" className="btn btn-pink btn-block" disabled={quoteStatus === "sending"}>
                   <span className="btn-label">{quoteStatus === "sending" ? "Sending…" : "Get my free quote"}</span>
@@ -674,6 +698,7 @@ export function MemberSignup({ kind, plan, setPlan, plans, phoneDisplay, onQuote
   const [sizeOk, setSizeOk] = useState(false);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
+  const [smsConsent, setSmsConsent] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -705,7 +730,7 @@ export function MemberSignup({ kind, plan, setPlan, plans, phoneDisplay, onQuote
     if (missing) { setError(club ? "Fill in every field and pick your vehicle size." : "Fill in every field and confirm your home size."); return; }
     setError(""); setStatus("sending");
     const payload = { plan, vehicleSize, vehicle, customerName: name, customerEmail: email, customerPhone: phoneNum, address };
-    localStorage.setItem("pendingMember", JSON.stringify({ name, phone: phoneNum, email, address, membership: chosen.label, vehicle: club ? `${vehicle} - ${vehicleSize}` : "", dueToday, monthly: "$" + monthly + "/mo" }));
+    localStorage.setItem("pendingMember", JSON.stringify({ name, phone: phoneNum, email, address, membership: chosen.label, vehicle: club ? `${vehicle} - ${vehicleSize}` : "", sms_consent: smsConsent ? "Yes" : "No", sms_consent_text: smsConsent ? SMS_CONSENT_TEXT : "", sms_consent_at: new Date().toISOString(), dueToday, monthly: "$" + monthly + "/mo" }));
     try {
       const res = await fetch("/api/create-subscription", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const data = await res.json();
@@ -768,6 +793,7 @@ export function MemberSignup({ kind, plan, setPlan, plans, phoneDisplay, onQuote
         <div className="field"><span>Service address</span>
           <AddressAutocomplete value={address} onChange={setAddress} placeholder="Street, city, ZIP" inputStyle={ADDRESS_INPUT} />
         </div>
+        <SmsConsent checked={smsConsent} onChange={e => setSmsConsent(e.target.checked)} name="sms_consent" />
         <div className="deposit">
           <div>
             <strong>Due today: ${dueToday}</strong>
@@ -945,6 +971,9 @@ section[id] { scroll-margin-top: 72px; }
 .note-ok { margin: 0; color: var(--ok); font-size: 14px; }
 .note-err { margin: 0; color: #FCA5A5; font-size: 14px; }
 .fine { margin: 0; color: var(--mist); font-size: 12px; text-align: center; }
+.consent { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; font-size: 12px; line-height: 1.55; color: var(--mist); cursor: pointer; }
+.consent input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--pink); cursor: pointer; }
+.consent a { color: var(--paper); }
 .call { text-align: center; justify-items: center; padding: 48px 28px; }
 .call-big { font-stretch: 125%; font-weight: 300; font-size: clamp(28px, 4vw, 40px); margin: 0; letter-spacing: .02em; }
 
