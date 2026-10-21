@@ -122,7 +122,7 @@ export function Page({ children }) {
 export function Promo() {
   return (
     <a className="promo" href="https://www.magiccityservicesmiami.com/holiday-lighting">
-      Holiday light installs are booking now. Lights, install and takedown included, from $499. <span className="promo-link">Get a free estimate</span>
+      Holiday light installs are booking now. Lights, install and takedown included, from $674. <span className="promo-link">Get a free estimate</span>
     </a>
   );
 }
